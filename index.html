@@ -11,7 +11,37 @@
 <script>
 let likes=12500, viewers=1240, rec, chunks=[], isRec=false;
 function startLive(){navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:720},audio:true}).then(s=>{document.getElementById('main').srcObject=s;document.getElementById('startScreen').style.display='none';setInterval(()=>{viewers+=Math.floor(Math.random()*5);document.getElementById('viewers').innerText='👁️ '+(viewers/1000).toFixed(1)+'k'},2000);addChat("مرحبا بالجميع فاللايف ديال الريف! ❤️","نظام");}).catch(()=>alert("عطي السماح للكاميرا"))}
-function addChat(t,name,isVideo){const b=document.getElementById('chatBox');const d=document.createElement('div');d.className='chatMsg';if(isVideo){const u=URL.createObjectURL(t);d.innerHTML=`<b>${name} 🎥</b><video src="${u}" autoplay loop muted playsinline></video>`;}else if(t.includes('🌹')||t.includes('🔥')||t.includes('💎')){d.innerHTML=`<b>${name}</b> أرسل <span class="gift">${t}</span>`;flyGift(t)}else{d.innerHTML=`<b>${name}:</b> ${t}`;}b.appendChild(d);b.scrollTop=b.scrollHeight;}
+function addChat(t,name,isVideo){
+const b=document.getElementById('chatBox');
+const d=document.createElement('div');
+d.className='chatMsg';
+d.style.position='relative';
+d.style.background='rgba(255,255,255,.1)';
+d.style.padding='8px 28px 8px 8px';
+d.style.borderRadius='12px';
+let content='';
+if(isVideo){
+const u=URL.createObjectURL(t);
+d.dataset.url=u;
+content=`<b>${name} 🎥</b><video src="${u}" autoplay loop muted playsinline></video><div style="display:flex;gap:6px;margin-top:4px"><button onclick="saveVideo(this)" style="background:#0095f6;border:0;color:#fff;padding:4px 8px;border-radius:10px;font-size:11px">💾 حفظ</button><button onclick="this.closest('.chatMsg').remove()" style="background:#ff004f;border:0;color:#fff;padding:4px 8px;border-radius:10px;font-size:11px">🗑️ مسح</button></div>`;
+}else if(t.includes('🌹')||t.includes('🔥')||t.includes('💎')){
+content=`<b>${name}</b> أرسل <span class="gift">${t}</span> <span onclick="this.parentElement.remove()" style="position:absolute;left:4px;top:4px;cursor:pointer">🗑️</span>`;
+flyGift(t);
+}else{
+content=`<b>${name}:</b> ${t} <span onclick="this.parentElement.remove()" style="position:absolute;left:4px;top:4px;cursor:pointer;font-size:12px">❌</span>`;
+}
+d.innerHTML=content;
+b.appendChild(d);
+b.scrollTop=b.scrollHeight;
+}
+function saveVideo(btn){
+const v=btn.closest('.chatMsg').querySelector('video');
+const a=document.createElement('a');
+a.href=v.src;
+a.download='riflive-'+Date.now()+'.webm';
+a.click();
+addChat("تم حفظ الفيديو ✅","نظام");
+}{const b=document.getElementById('chatBox');const d=document.createElement('div');d.className='chatMsg';if(isVideo){const u=URL.createObjectURL(t);d.innerHTML=`<b>${name} 🎥</b><video src="${u}" autoplay loop muted playsinline></video>`;}else if(t.includes('🌹')||t.includes('🔥')||t.includes('💎')){d.innerHTML=`<b>${name}</b> أرسل <span class="gift">${t}</span>`;flyGift(t)}else{d.innerHTML=`<b>${name}:</b> ${t}`;}b.appendChild(d);b.scrollTop=b.scrollHeight;}
 function sendText(){const i=document.getElementById('msgInput');if(!i.value)return;addChat(i.value,"أنت");i.value="";}
 function sendGift(g){addChat(g+" هدية!","أنت");likes+=parseInt(g.match(/\d+/)?.[0]||10);document.getElementById('likeCount').innerText=(likes/1000).toFixed(1)+'k';}
 function like(){likes++;document.getElementById('likeCount').innerText=(likes/1000).toFixed(1)+'k';const h=document.createElement('div');h.innerText='❤️';h.style.position='absolute';h.style.right=Math.random()*60+20+'px';h.style.bottom='80px';h.style.fontSize='28px';h.style.animation='heartUp 2s forwards';document.getElementById('hearts').appendChild(h);setTimeout(()=>h.remove(),2000);document.getElementById('likeBtn').classList.add('liked');setTimeout(()=>document.getElementById('likeBtn').classList.remove('liked'),200)}
