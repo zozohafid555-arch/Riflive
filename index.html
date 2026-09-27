@@ -1,159 +1,35 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>RiiFlive PRO - Riflive</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-<style>*{font-family:'Tajawal',system-ui}.no-scrollbar::-webkit-scrollbar{display:none}</style>
-</head>
-<body class="bg-[#FFF9C4] flex justify-center min-h-screen">
-<div id="app" class="w-full max-w-[420px] bg-white min-h-screen shadow-2xl flex flex-col relative">
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RiiFlive PRO MAX</title><script src="https://cdn.tailwindcss.com"></script><style>*{font-family:system-ui}.no-scrollbar::-webkit-scrollbar{display:none}</style></head><body class="bg-[#FFF9C4] flex justify-center min-h-screen"><div class="w-full max-w-[420px] bg-white min-h-screen shadow-2xl flex flex-col relative"><div class="bg-[#0B2A8A] text-white p-4 flex justify-between items-center sticky top-0 z-50"><div class="flex gap-2 items-center"><div class="w-8 h-8 bg-white text-[#0B2A8A] rounded-full flex items-center justify-center font-black">ⵣ</div><b>RiiFlive</b><span class="bg-red-600 text-[10px] px-2 py-0.5 rounded-full">LIVE</span></div><div>🔍 🔔</div></div>
 
-<!-- HEADER -->
-<div class="bg-[#0B2A8A] text-white p-4 flex justify-between items-center sticky top-0 z-50">
-<div class="flex gap-2 items-center"><div class="w-8 h-8 bg-white text-[#0B2A8A] rounded-full flex items-center justify-center font-black">ⵣ</div><b>RiiFlive</b><span class="bg-red-600 text-[10px] px-2 py-0.5 rounded-full ml-2">LIVE</span></div>
-<div class="flex gap-3 text-white">🔍 🔔</div>
-</div>
+<div id="screen-home" class="flex-1 flex flex-col"><div class="flex gap-2 p-3 overflow-x-auto no-scrollbar border-b"><button onclick="setCat('الكل')" id="cat-الكل" class="cat-btn bg-[#0B2A8A] text-white px-4 py-2 rounded-full text-sm">الكل</button><button onclick="setCat('مباشر الريف')" id="cat-مباشر الريف" class="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm">مباشر الريف</button><button onclick="setCat('CRA')" id="cat-CRA" class="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm">CRA</button><button onclick="setCat('مغتربو الريف')" id="cat-مغتربو الريف" class="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm">مغتربو الريف</button></div><div id="feed" class="p-3 space-y-4 pb-28 overflow-y-auto flex-1"></div></div>
 
-<!-- SCREENS -->
-<div id="screen-home" class="flex-1 flex flex-col">
-<div class="flex gap-2 p-3 overflow-x-auto no-scrollbar border-b bg-white">
-<button onclick="setCat('الكل')" id="cat-الكل" class="cat-btn bg-[#0B2A8A] text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">الكل</button>
-<button onclick="setCat('مباشر الريف')" id="cat-مباشر الريف" class="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm whitespace-nowrap">مباشر الريف</button>
-<button onclick="setCat('CRA')" id="cat-CRA" class="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm whitespace-nowrap">CRA</button>
-<button onclick="setCat('مغتربو الريف')" id="cat-مغتربو الريف" class="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm whitespace-nowrap">مغتربو الريف</button>
-</div>
-<div id="feed" class="p-3 space-y-4 pb-28 overflow-y-auto flex-1"></div>
-</div>
+<div id="screen-live" class="hidden flex-1 bg-black relative flex-col h-[calc(100vh-64px)]"><video id="cam" autoplay playsinline muted class="w-full h-full object-cover absolute inset-0"></video><div class="relative z-10 p-3 flex justify-between"><button onclick="showScreen('home')" class="bg-white/80 w-9 h-9 rounded-full">✖️</button><span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs">LIVE • 1.2K</span></div><div id="liveComs" class="absolute bottom-[148px] left-2 right-2 z-20 max-h-[35vh] overflow-y-auto flex flex-col gap-2 no-scrollbar"></div><div class="absolute bottom-0 left-0 right-0 z-30 bg-white rounded-t-[22px] p-3"><div id="reBarLive" class="hidden bg-orange-100 p-2 rounded-xl justify-between text-xs mb-2"><span id="reTxLive"></span><button onclick="cR()">✖️</button></div><div class="flex gap-2 justify-center mb-2"><button onclick="setFilter('none',this)" class="f-btn bg-black text-white px-3 py-1 rounded-full text-xs">عادي</button><button onclick="setFilter('bright',this)" class="f-btn bg-black/60 text-white px-3 py-1 rounded-full text-xs">✨ تبييض</button><button onclick="setFilter('warm',this)" class="f-btn bg-black/60 text-white px-3 py-1 rounded-full text-xs">🌞 دافي</button><button onclick="setFilter('bw',this)" class="f-btn bg-black/60 text-white px-3 py-1 rounded-full text-xs">⚫ أسود</button></div><div class="flex gap-1 overflow-x-auto no-scrollbar pb-2"><span onclick="addE('❤️')" class="text-xl bg-yellow-50 p-1 rounded cursor-pointer">❤️</span><span onclick="addE('🔥')" class="text-xl bg-yellow-50 p-1 rounded cursor-pointer">🔥</span><span onclick="addE('😂')" class="text-xl bg-yellow-50 p-1 rounded cursor-pointer">😂</span><span onclick="addE('🇲🇦')" class="text-xl bg-yellow-50 p-1 rounded cursor-pointer">🇲🇦</span><span onclick="addE('👏')" class="text-xl bg-yellow-50 p-1 rounded cursor-pointer">👏</span></div><div class="flex gap-2 items-center"><input id="txtLive" placeholder="كتب تعليق... ولا رد بالفيديو" class="flex-1 bg-gray-100 p-3 rounded-full text-sm outline-none" onkeydown="if(event.key==='Enter')sendLive()"><button onclick="record(true)" class="bg-pink-100 w-10 h-10 rounded-full">📹</button><button onclick="sendLive()" class="bg-black text-white px-5 py-3 rounded-full text-sm font-bold">إرسال</button><button onclick="startCam()" class="bg-green-100 w-10 h-10 rounded-full">📷</button></div></div></div>
 
-<!-- LIVE CAM SCREEN -->
-<div id="screen-live" class="hidden flex-1 bg-black relative flex-col">
-<video id="cam" autoplay playsinline muted class="w-full h-full object-cover absolute inset-0"></video>
-<div class="relative z-10 h-full flex flex-col justify-between p-4">
-<div class="flex justify-between"><button onclick="showScreen('home')" class="bg-white/80 w-9 h-9 rounded-full">✖️</button><span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs">LIVE • 1.2K</span></div>
-<div>
-<div class="flex gap-2 justify-center mb-3">
-<button onclick="setFilter('none',this)" class="f-btn bg-white text-black px-3 py-1.5 rounded-full text-xs">عادي</button>
-<button onclick="setFilter('bright',this)" class="f-btn bg-black/60 text-white px-3 py-1.5 rounded-full text-xs">✨ تبييض</button>
-<button onclick="setFilter('bw',this)" class="f-btn bg-black/60 text-white px-3 py-1.5 rounded-full text-xs">⚫ أسود</button>
-<button onclick="setFilter('warm',this)" class="f-btn bg-black/60 text-white px-3 py-1.5 rounded-full text-xs">🌞 دافي</button>
-</div>
-<div class="flex gap-2"><button onclick="startCam()" class="flex-1 bg-white p-4 rounded-full font-bold">📷 شغل الكاميرا</button><button onclick="flipCam()" class="bg-white/90 p-4 rounded-full">🔄</button></div>
-<p class="text-white/70 text-[11px] text-center mt-2">إلا ما خدماتش دير Allow للكاميرا فوق 🔒</p>
-</div>
-</div>
-</div>
+<div id="screen-video" class="hidden flex-1 flex-col bg-black"><div class="relative"><img id="v-img" class="w-full h-[38vh] object-cover"><button onclick="showScreen('home')" class="absolute top-3 left-3 bg-black/60 text-white w-9 h-9 rounded-full">✖️</button></div><div class="bg-white flex-1 rounded-t-[24px] -mt-5 p-4 flex flex-col"><h2 id="v-title" class="font-bold text-sm"></h2><div id="replyBar" class="hidden bg-orange-100 p-2 rounded-xl justify-between text-xs mt-2"><span id="replyText"></span><button onclick="cancelReply()">✖️</button></div><div id="comments" class="flex-1 overflow-y-auto mt-3 space-y-2"></div><div class="flex gap-1 overflow-x-auto no-scrollbar py-2" id="emojiBar"></div><div class="flex gap-2"><input id="txt" placeholder="كتب تعليق..." class="flex-1 bg-gray-100 p-3 rounded-full text-sm outline-none"><button onclick="record(false)" class="bg-pink-100 w-10 h-10 rounded-full">📹</button><button onclick="sendComment()" class="bg-black text-white px-6 rounded-full text-sm font-bold">إرسال</button></div></div></div>
 
-<!-- VIDEO + COMMENTS SCREEN -->
-<div id="screen-video" class="hidden flex-1 flex-col bg-black">
-<div class="relative"><img id="v-img" class="w-full h-[40vh] object-cover"/><button onclick="showScreen('home')" class="absolute top-3 left-3 bg-black/60 text-white w-9 h-9 rounded-full">✖️</button><span class="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-full text-xs">LIVE</span></div>
-<div class="bg-white flex-1 rounded-t-[28px] -mt-6 p-4 flex flex-col overflow-hidden">
-<h2 id="v-title" class="font-bold text-sm"></h2>
-<div id="replyBar" class="hidden bg-orange-100 p-2 rounded-xl flex justify-between text-xs mt-2"><span id="replyText"></span><button onclick="cancelReply()">✖️</button></div>
-<div id="comments" class="flex-1 overflow-y-auto mt-3 space-y-2"></div>
-<div class="border-t pt-2 mt-2">
-<div class="flex gap-1 overflow-x-auto no-scrollbar py-2" id="emojiBar"></div>
-<div class="flex gap-2 items-center mt-2"><span class="text-2xl cursor-pointer" onclick="toggleEmoji()">😀</span><input id="txt" placeholder="كتب تعليق..." class="flex-1 bg-gray-100 p-3 rounded-full text-sm outline-none" onkeydown="if(event.key==='Enter')sendComment()"><button onclick="recordVideoComment()" class="bg-pink-100 w-10 h-10 rounded-full">📹</button><button onclick="sendComment()" class="bg-black text-white px-6 py-3 rounded-full text-sm font-bold">إرسال</button></div>
-</div>
-</div>
-</div>
+<div id="screen-publish" class="hidden flex-1 p-4"><div class="flex justify-between mb-4"><h1 class="font-bold text-xl">منشور جديد</h1><button onclick="showScreen('home')" class="w-8 h-8 bg-gray-100 rounded-full">✖️</button></div><div class="border-2 border-dashed rounded-2xl p-8 text-center bg-gray-50 mb-4"><input id="pub-file" type="file" accept="image/*" class="text-xs w-full"></div><input id="pub-title" placeholder="عنوان..." class="w-full border p-3 rounded-xl mb-3 text-sm"><select id="pub-cat" class="w-full border p-3 rounded-xl mb-4 text-sm"><option>مباشر الريف</option><option>CRA</option><option>مغتربو الريف</option></select><button onclick="publish()" class="w-full bg-[#0B2A8A] text-white p-4 rounded-xl font-bold">نشر 🚀</button></div>
 
-<!-- PUBLISH SCREEN -->
-<div id="screen-publish" class="hidden flex-1 p-4">
-<div class="flex justify-between mb-4"><h1 class="font-bold text-xl">إنشاء منشور جديد</h1><button onclick="showScreen('home')" class="w-8 h-8 bg-gray-100 rounded-full">✖️</button></div>
-<div class="border-2 border-dashed rounded-2xl p-8 text-center bg-gray-50 mb-4"><div class="text-4xl">📤</div><p class="text-sm mt-2">اختار صورة</p><input id="pub-file" type="file" accept="image/*" class="mt-2 text-xs w-full"></div>
-<input id="pub-title" placeholder="عنوان المنشور... مثلا: أجواء الحسيمة اليوم" class="w-full border p-3 rounded-xl mb-3 text-sm">
-<select id="pub-cat" class="w-full border p-3 rounded-xl mb-4 text-sm"><option>مباشر الريف</option><option>CRA</option><option>مغتربو الريف</option><option>تراث الريف</option></select>
-<button onclick="publish()" class="w-full bg-[#0B2A8A] text-white p-4 rounded-xl font-bold">نشر الآن 🚀</button>
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="fixed bottom-0 w-full max-w-[420px] bg-white border-t flex justify-around items-center p-3 pb-7 z-50">
-<button onclick="showScreen('home')" id="nav-home" class="text-[#0B2A8A]">🏠</button>
-<button onclick="openLive()" id="nav-live">🎥</button>
-<button onclick="showScreen('publish')" class="bg-[#0B2A8A] text-white w-14 h-14 rounded-full -mt-6 text-2xl flex items-center justify-center">+</button>
-<button>🔍</button>
-<button>👤</button>
-</div>
-
-</div>
+<div class="fixed bottom-0 w-full max-w-[420px] bg-white border-t flex justify-around p-3 pb-7 z-50"><button onclick="showScreen('home')">🏠</button><button onclick="openLive()">🎥</button><button onclick="showScreen('publish')" class="bg-[#0B2A8A] text-white w-14 h-14 rounded-full -mt-6 text-2xl">+</button><button>🔍</button><button>👤</button></div></div>
 
 <script>
-let posts = [
- {id:1, title:"صباح الخير من كورنيش الحسيمة اليوم 🌊", city:"الحسيمة", category:"مباشر الريف", views:"2.1K", likes:45, img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e", comments:[{id:101, text:"زوين بزاف ❤️🔥", user:"أحمد", replies:[]}]},
- {id:2, title:"شباب الريف الحسيمي يستعد للمباراة 💙", city:"CRA", category:"CRA", views:"5.4K", likes:120, img:"https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d", comments:[]},
- {id:3, title:"ريفي من إشبيلية: هكا دايرة الغربة 🇪🇸", city:"إشبيلية", category:"مغتربو الريف", views:"1.2K", likes:89, img:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac", comments:[]},
-]
-let activeCat="الكل", selected=null, replyTo=null, stream=null, facing="user", filter="none"
-const emojis=["❤️","🔥","😂","😍","👏","🥰","💯","✨","🇲🇦","👑","😭","💪"]
-
-function renderFeed(){
- let f = activeCat==="الكل"? posts : posts.filter(p=>p.category===activeCat)
- document.getElementById('feed').innerHTML = f.map(p=>`
-  <div class="rounded-2xl overflow-hidden shadow border bg-white">
-   <img src="${p.img}" onclick="openVideo(${p.id})" class="w-full h-56 object-cover cursor-pointer">
-   <div class="p-3"><h3 class="font-bold text-sm leading-5">${p.title}</h3><p class="text-xs text-gray-500 mt-1">${p.city} • ${p.views} مشاهدة</p>
-   <div class="flex gap-4 mt-3 text-sm text-gray-600"><span>❤️ ${p.likes}</span><span>💬 ${p.comments.length}</span><span>↗️ بارطاجي</span></div></div>
-  </div>`).join('')
-}
-function setCat(c){ activeCat=c; document.querySelectorAll('.cat-btn').forEach(b=>b.className="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm whitespace-nowrap"); document.getElementById('cat-'+c).className="cat-btn bg-[#0B2A8A] text-white px-4 py-2 rounded-full text-sm whitespace-nowrap"; renderFeed() }
-function showScreen(s){ ['home','live','video','publish'].forEach(k=>document.getElementById('screen-'+k).classList.add('hidden')); document.getElementById('screen-'+s).classList.remove('hidden'); document.getElementById('screen-'+s).classList.add('flex'); if(s!=='live' && stream){stream.getTracks().forEach(t=>t.stop()); stream=null} }
-function openLive(){ showScreen('live'); setTimeout(startCam,300) }
-function openVideo(id){ selected=posts.find(p=>p.id===id); document.getElementById('v-img').src=selected.img; document.getElementById('v-title').innerText=selected.title; renderComments(); showScreen('video') }
-function renderComments(){
- document.getElementById('comments').innerHTML = selected.comments.map(c=>`
-  <div class="bg-gray-100 p-3 rounded-2xl"><b class="text-[10px] text-gray-500">${c.user}</b><p class="text-sm">${c.text}</p>
-  ${c.video?`<video src="${c.video}" controls class="w-full rounded-xl mt-2 max-h-40"></video>`:''}
-  <button onclick="setReply(${c.id})" class="text-[11px] bg-black text-white px-3 py-1 rounded-full mt-2">↩️ رد</button>
-  ${c.replies.map(r=>`<div class="mr-5 mt-2 bg-blue-50 border border-blue-200 p-2.5 rounded-xl text-sm"><b class="text-[10px]">↩️ ${r.user}:</b> ${r.text}</div>`).join('')}
-  </div>`).join('')
- document.getElementById('emojiBar').innerHTML = emojis.map(e=>`<span onclick="addEmoji('${e}')" class="text-[22px] bg-yellow-50 p-1.5 rounded-xl cursor-pointer flex-shrink-0">${e}</span>`).join('')
-}
-function setReply(id){ replyTo=selected.comments.find(c=>c.id===id); document.getElementById('replyBar').classList.remove('hidden'); document.getElementById('replyBar').classList.add('flex'); document.getElementById('replyText').innerText="↩️ كترد على: "+replyTo.text.slice(0,18); document.getElementById('txt').focus() }
-function cancelReply(){ replyTo=null; document.getElementById('replyBar').classList.add('hidden') }
-function addEmoji(e){ document.getElementById('txt').value+=e; document.getElementById('txt').focus() }
-function toggleEmoji(){ let b=document.getElementById('emojiBar'); b.style.display=b.style.display==='none'?'flex':'none' }
-function sendComment(){
- let t=document.getElementById('txt'); if(!t.value.trim()) return
- let isOnlyEmoji = /^[\p{Emoji}\s]+$/u.test(t.value.trim()) && t.value.trim().length<=8
- let newC = {id:Date.now(), text:t.value, user:"أنت", replies:[], video:null}
- if(replyTo){
-  selected.comments = selected.comments.map(c=> c.id===replyTo.id? {...c, replies:[...c.replies, {id:Date.now(), text:t.value, user:"أنت"}]} : c)
- } else {
-  selected.comments.push(newC)
- }
- posts = posts.map(p=> p.id===selected.id? selected : p)
- if(isOnlyEmoji){ /* إيموجي كبير */ }
- t.value=""; cancelReply(); renderComments(); renderFeed()
-}
-async function startCam(){ try{ if(stream) stream.getTracks().forEach(t=>t.stop()); let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}, audio:true}); document.getElementById('cam').srcObject=s; stream=s; }catch(e){ alert("خاصك تدير Allow للكاميرا - كليكي على 🔒 فوق") } }
-function flipCam(){ facing=facing==="user"?"environment":"user"; startCam() }
-function setFilter(f,el){ filter=f; let cam=document.getElementById('cam'); if(f==='none') cam.style.filter='none'; if(f==='bright') cam.style.filter='brightness(1.35) contrast(1.1)'; if(f==='bw') cam.style.filter='grayscale(1)'; if(f==='warm') cam.style.filter='sepia(.35) brightness(1.1)'; document.querySelectorAll('.f-btn').forEach(b=>{b.className="f-btn bg-black/60 text-white px-3 py-1.5 rounded-full text-xs"}); el.className="f-btn bg-white text-black px-3 py-1.5 rounded-full text-xs" }
-async function recordVideoComment(){
- try{
-  let s=await navigator.mediaDevices.getUserMedia({video:true, audio:true})
-  let rec=new MediaRecorder(s); let chunks=[]
-  alert("كيسجل فيديو 5 ثواني...")
-  rec.ondataavailable=e=>chunks.push(e.data)
-  rec.onstop=()=>{
-   let url=URL.createObjectURL(new Blob(chunks,{type:'video/webm'}))
-   selected.comments.push({id:Date.now(), text:"فيديو 📹", user:"أنت", replies:[], video:url})
-   posts=posts.map(p=>p.id===selected.id?selected:p)
-   renderComments(); s.getTracks().forEach(t=>t.stop())
-  }
-  rec.start(); setTimeout(()=>rec.stop(),5000)
- }catch(e){ alert("ما قدرناش نشعلو الكاميرا") }
-}
-function publish(){
- let title=document.getElementById('pub-title').value; let cat=document.getElementById('pub-cat').value; let file=document.getElementById('pub-file').files[0]
- if(!title) return alert("كتب العنوان")
- let img = file? URL.createObjectURL(file) : "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
- posts.unshift({id:Date.now(), title, city:cat, category:cat, views:"0", likes:0, img, comments:[]})
- document.getElementById('pub-title').value=""; renderFeed(); showScreen('home')
-}
+let posts=[{id:1,title:"صباح الحسيمة 🌊",city:"الحسيمة",category:"مباشر الريف",views:"2.1K",likes:45,img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",comments:[{id:101,text:"زوين ❤️🔥",user:"أحمد",replies:[]}]},{id:2,title:"CRA يستعد 💙",city:"CRA",category:"CRA",views:"5.4K",likes:120,img:"https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d",comments:[]},{id:3,title:"مغتربو الريف 🇪🇸",city:"إشبيلية",category:"مغتربو الريف",views:"1.2K",likes:89,img:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac",comments:[]}];
+let active="الكل",sel=null,replyTo=null,replyLive=null,stream=null,face="user";
+function renderFeed(){let f=active=="الكل"?posts:posts.filter(p=>p.category==active);document.getElementById('feed').innerHTML=f.map(p=>`<div class="rounded-2xl overflow-hidden shadow border"><img src="${p.img}" onclick="openVideo(${p.id})" class="w-full h-52 object-cover cursor-pointer"><div class="p-3"><h3 class="font-bold text-sm">${p.title}</h3><p class="text-xs text-gray-500">${p.city} • ${p.views}</p><div class="flex gap-4 mt-2 text-sm"><span>❤️ ${p.likes}</span><span>💬 ${p.comments.length}</span></div></div></div>`).join('')}
+function setCat(c){active=c;document.querySelectorAll('.cat-btn').forEach(b=>b.className="cat-btn bg-gray-100 px-4 py-2 rounded-full text-sm");document.getElementById('cat-'+c).className="cat-btn bg-[#0B2A8A] text-white px-4 py-2 rounded-full text-sm";renderFeed()}
+function showScreen(s){['home','live','video','publish'].forEach(k=>document.getElementById('screen-'+k).classList.add('hidden'));document.getElementById('screen-'+s).classList.remove('hidden');document.getElementById('screen-'+s).classList.add('flex');if(s!='live'&&stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
+function openLive(){showScreen('live');setTimeout(startCam,300);renderLiveComs()}
+function openVideo(id){sel=posts.find(p=>p.id==id);document.getElementById('v-img').src=sel.img;document.getElementById('v-title').innerText=sel.title;renderComments();showScreen('video')}
+function renderComments(){document.getElementById('comments').innerHTML=sel.comments.map(c=>`<div class="bg-gray-100 p-3 rounded-2xl"><b class="text-[10px]">${c.user}</b><p class="text-sm">${c.text}</p>${c.video?`<video src="${c.video}" controls class="w-full rounded-xl mt-2 max-h-32"></video>`:''}<button onclick="setReply(${c.id})" class="text-[11px] bg-black text-white px-3 py-1 rounded-full mt-1">↩️ رد</button>${c.replies.map(r=>`<div class="mr-4 mt-2 bg-blue-50 border p-2 rounded-xl text-sm"><b>↩️ ${r.user}:</b> ${r.text}${r.video?`<video src="${r.video}" controls class="w-full rounded mt-1 max-h-32"></video>`:''}</div>`).join('')}</div>`).join('');document.getElementById('emojiBar').innerHTML=["❤️","🔥","😂","😍","👏","🇲🇦","💯"].map(e=>`<span onclick="document.getElementById('txt').value+= '${e}'" class="text-2xl bg-yellow-50 p-1 rounded cursor-pointer">${e}</span>`).join('')}
+function renderLiveComs(){document.getElementById('liveComs').innerHTML=posts.flatMap(p=>p.comments).slice(-6).map(c=>`<div class="bg-white/90 backdrop-blur p-2 px-3 rounded-2xl text-[13px] max-w-[85%]"><b class="text-[9px] text-gray-600">${c.user}:</b> ${c.text}${c.video?` <span class="text-[10px] bg-pink-100 px-1 rounded">📹 فيديو</span>`:''}<button onclick="setReplyLive('${c.text.slice(0,10)}',this)" class="mr-2 bg-black text-white text-[10px] px-2 py-0.5 rounded-full">↩️</button></div>`).join('')}
+function setReply(id){replyTo=sel.comments.find(c=>c.id==id);document.getElementById('replyBar').classList.remove('hidden');document.getElementById('replyBar').classList.add('flex');document.getElementById('replyText').innerText="↩️ كترد على: "+replyTo.text.slice(0,15)}
+function cancelReply(){replyTo=null;document.getElementById('replyBar').classList.add('hidden')}
+function setReplyLive(tx,btn){replyLive={text:tx,el:btn.parentElement};document.getElementById('reBarLive').style.display='flex';document.getElementById('reBarLive').classList.add('flex');document.getElementById('reTxLive').innerText="↩️ كترد على: "+tx;document.getElementById('txtLive').focus()}
+function cR(){replyLive=null;document.getElementById('reBarLive').style.display='none'}
+function addE(e){let i=document.getElementById('txtLive');i.value+=e;i.focus()}
+function sendLive(){let t=document.getElementById('txtLive');if(!t.value.trim())return;let d=document.createElement('div');d.className="bg-white/90 p-2 px-3 rounded-2xl text-[13px] max-w-[85%]"+(replyLive?" mr-4 bg-[#FFF9C4] border border-yellow-400":"");d.innerHTML=(replyLive?"<b class='text-[9px]'>↩️ رد على "+replyLive.text+":</b> ":"<b class='text-[9px]'>أنت:</b> ")+t.value;document.getElementById('liveComs').appendChild(d);t.value="";cR();document.getElementById('liveComs').scrollTop=9999}
+function sendComment(){let t=document.getElementById('txt');if(!t.value.trim()||!sel)return;if(replyTo){sel.comments=sel.comments.map(c=>c.id==replyTo.id?{...c,replies:[...c.replies,{id:Date.now(),text:t.value,user:"أنت"}]}:c)}else{sel.comments.push({id:Date.now(),text:t.value,user:"أنت",replies:[]})}posts=posts.map(p=>p.id==sel.id?sel:p);t.value="";cancelReply();renderComments();renderFeed();renderLiveComs()}
+async function startCam(){try{if(stream)stream.getTracks().forEach(t=>t.stop());let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:face},audio:true});document.getElementById('cam').srcObject=s;stream=s}catch(e){alert("دير Allow للكاميرا")}}
+function setFilter(f,el){let c=document.getElementById('cam');if(f=='none')c.style.filter='none';if(f=='bright')c.style.filter='brightness(1.35)';if(f=='warm')c.style.filter='sepia(.3)';if(f=='bw')c.style.filter='grayscale(1)';document.querySelectorAll('.f-btn').forEach(b=>b.className="f-btn bg-black/60 text-white px-3 py-1 rounded-full text-xs");el.className="f-btn bg-white text-black px-3 py-1 rounded-full text-xs"}
+async function record(isLive){try{let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});let r=new MediaRecorder(s),ch=[];r.ondataavailable=e=>ch.push(e.data);r.onstop=()=>{let u=URL.createObjectURL(new Blob(ch,{type:'video/webm'}));if(isLive){let d=document.createElement('div');d.className="bg-white/90 p-2 rounded-2xl text-[13px] max-w-[85%] "+(replyLive?"mr-4 bg-[#FFF9C4] border":"");d.innerHTML=(replyLive?"<b>↩️ رد فيديو:</b>":"<b>فيديو:</b>")+`<video src="${u}" controls class="w-full rounded-xl mt-1 max-h-28"></video>`;document.getElementById('liveComs').appendChild(d);cR()}else{if(replyTo){sel.comments=sel.comments.map(c=>c.id==replyTo.id?{...c,replies:[...c.replies,{id:Date.now(),text:"رد فيديو 📹",user:"أنت",video:u}]}:c)}else{sel.comments.push({id:Date.now(),text:"فيديو 📹",user:"أنت",replies:[],video:u})}posts=posts.map(p=>p.id==sel.id?sel:p);renderComments()}s.getTracks().forEach(t=>t.stop())};r.start();setTimeout(()=>r.stop(),5000);alert("كيسجل 5 ثواني...")}catch(e){alert("الكاميرا ما خدماش")}}
+function publish(){let t=document.getElementById('pub-title').value,c=document.getElementById('pub-cat').value,f=document.getElementById('pub-file').files[0];if(!t)return alert("كتب العنوان");let img=f?URL.createObjectURL(f):"https://images.unsplash.com/photo-1507525428034-b723cf961d3e";posts.unshift({id:Date.now(),title:t,city:c,category:c,views:"0",likes:0,img,comments:[]});document.getElementById('pub-title').value="";renderFeed();showScreen('home')}
 renderFeed()
-</script>
-</body>
-</html>
+</script></body></html>
