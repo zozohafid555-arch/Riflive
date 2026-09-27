@@ -2,176 +2,80 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>RifLive ⵣ</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#FFF9B0}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
+body{background:#FFF9B0;display:flex;flex-direction:column;height:100vh}
+.topbar{display:flex;justify-content:space-between;padding:10px 14px}
 .tab{padding:7px 16px;border-radius:20px;border:none;font-weight:700}
 .tab.active{background:black;color:white}
-.tab.no{background:white;color:black}
-#liveWrap{position:relative;width:92%;height:78vh;margin:0 auto;background:black;border-radius:24px;overflow:hidden;box-shadow:0 10px 30px #0002}
-#video{width:100%;height:100%;object-fit:cover;background:#111}
-#ui{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:12px}
-.badge{display:flex;gap:8px}
+#liveWrap{position:relative;width:94%;height:45vh;margin:0 auto;background:black;border-radius:24px;overflow:hidden;flex-shrink:0}
+#video{width:100%;height:100%;object-fit:cover}
+#ui{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:10px}
 .badge span{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:900}
-.off{background:#eee;color:black}
-.live{background:#FF0000;color:white}
-#chatBox{display:flex;flex-direction:column;gap:8px;max-height:32vh;overflow-y:auto}
-.chatMsg{background:white;color:black!important;padding:9px 13px;border-radius:14px;font-size:14px;width:fit-content;max-width:85%;position:relative;box-shadow:0 2px 6px #0002;animation:up .3s}
-@keyframes up{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-.del{position:absolute;top:-6px;left:-6px;background:red;color:white;border:none;width:20px;height:20px;border-radius:50%;font-size:12px;cursor:pointer}
-#controls{display:flex;gap:8px;align-items:center}
-.flip{width:42px;height:42px;border-radius:50%;border:none;background:#ffffffcc;cursor:pointer;font-size:18px}
-.startBtn{flex:1;background:white;color:black;border:none;padding:12px;border-radius:30px;font-weight:900;cursor:pointer}
-#inputBar{width:92%;margin:12px auto;display:flex;gap:8px;align-items:center}
+.off{background:#eee}
+.live{background:red;color:white}
+#controls{display:flex;gap:8px}
+.flip{width:42px;height:42px;border-radius:50%;border:none;background:#ffffffcc;font-size:18px}
+.startBtn{flex:1;background:white;border:none;padding:12px;border-radius:30px;font-weight:900}
+#chatSection{flex:1;width:94%;margin:10px auto;background:white;border-radius:20px;padding:10px;display:flex;flex-direction:column;overflow:hidden}
+#chatBox{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.chatMsg{background:#f5f5f5;color:black;padding:10px 14px;border-radius:14px;width:fit-content;max-width:90%;position:relative;box-shadow:0 1px 3px #0001}
+.del{position:absolute;top:-6px;left:-6px;background:red;color:white;border:none;width:20px;height:20px;border-radius:50%;font-size:12px}
+.videoBtn{background:#ff0000;color:white;border:none;padding:11px;border-radius:30px;font-weight:800;width:100%;margin-top:8px}
+#inputBar{display:flex;gap:8px;padding:10px;width:94%;margin:0 auto 10px}
 .inpWrap{flex:1;background:white;border-radius:30px;display:flex;align-items:center;padding:6px 14px;gap:6px}
-.inpWrap input{flex:1;border:none;outline:none;font-size:14px}
-.sendBtn{background:black;color:white;border:none;padding:10px 18px;border-radius:30px;font-weight:800;cursor:pointer}
-.gift{position:absolute;bottom:100px;font-size:28px;animation:fly 3s forwards}
-@keyframes fly{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-400px) scale(1.5);opacity:0}}
-.videoBtn{background:red;color:white;border:none;padding:10px 14px;border-radius:30px;font-weight:800;width:92%;margin:0 auto 6px;display:block}
+.inpWrap input{flex:1;border:none;outline:none}
+.sendBtn{background:black;color:white;border:none;padding:10px 18px;border-radius:30px;font-weight:800}
 </style>
 </head>
 <body>
-
-<div class="topbar">
-  <div style="display:flex;gap:8px">
-    <button class="tab no">المنشورات</button>
-    <button class="tab active">لايف</button>
-  </div>
-  <b>RifLive 🥨</b>
-</div>
+<div class="topbar"><div style="display:flex;gap:8px"><button class="tab">المنشورات</button><button class="tab active">لايف</button></div><b>RifLive 🥨</b></div>
 
 <div id="liveWrap">
   <video id="video" autoplay muted playsinline></video>
   <div id="ui">
-    <div class="badge">
-      <span id="offBadge" class="off">OFF</span>
-      <span class="live">LIVE •</span>
-    </div>
-    <div id="chatBox"></div>
-    <div id="controls">
-      <button class="flip" onclick="flipCam()">🔄</button>
-      <button class="startBtn" onclick="startLive()">📷 شغل الكاميرا</button>
-    </div>
+    <div class="badge"><span id="offBadge" class="off">OFF</span><span class="live">• LIVE</span></div>
+    <div id="controls"><button class="flip" onclick="flipCam()">🔄</button><button class="startBtn" onclick="startLive()">📷 شغل الكاميرا</button></div>
   </div>
 </div>
 
-<button class="videoBtn" onclick="recordVideoComment()">🔴 تعليق بالفيديو 5s</button>
+<div id="chatSection">
+  <div id="chatBox"></div>
+  <button class="videoBtn" onclick="recordVideoComment()">🔴 تعليق بالفيديو 5s</button>
+</div>
 
 <div id="inputBar">
+  <button style="border:none;background:none;font-size:20px" onclick="sendGift()">❤️</button>
+  <div class="inpWrap"><input id="msgInput" placeholder="كتب تعليق..."></div>
   <button class="sendBtn" onclick="sendMsg()">إرسال</button>
-  <div class="inpWrap">
-    <input id="msgInput" placeholder="كتب تعليق...">
-    <span style="cursor:pointer" onclick="sendGift()">❤️</span>
-  </div>
-  <button class="flip" onclick="clearAll()">🧹</button>
 </div>
 
 <script>
-let video=document.getElementById('video');
-let chatBox=document.getElementById('chatBox');
-let currentStream=null;
-let facing='user';
-let mediaRecorder=null;
-let chunks=[];
-let userName=localStorage.getItem('rif_name')||'';
-
-function getName(){
- if(!userName){
-   userName=prompt('شنو سميتك؟')||'ضيف';
-   localStorage.setItem('rif_name',userName);
- }
- return userName;
-}
-
+let video=document.getElementById('video'),chatBox=document.getElementById('chatBox'),currentStream=null,facing='user',mediaRecorder=null,chunks=[],userName=localStorage.getItem('rif_name')||'';
+function getName(){if(!userName){userName=prompt('سميتك؟')||'ضيف';localStorage.setItem('rif_name',userName)}return userName}
 async function startLive(){
  try{
-  if(currentStream){currentStream.getTracks().forEach(t=>t.stop())}
-  let stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
-  currentStream=stream;
-  video.srcObject=stream;
-  document.getElementById('offBadge').textContent='ON';
-  document.getElementById('offBadge').style.background='#00E676';
-  addSystem('الكاميرا خدامة ✅');
-  // recorder للفيديو القصير
-  mediaRecorder=new MediaRecorder(stream);
-  mediaRecorder.ondataavailable=e=>chunks.push(e.data);
-  mediaRecorder.onstop=()=>{
-    let blob=new Blob(chunks,{type:'video/webm'});
-    chunks=[];
-    addChat(getName(),'',blob);
-  };
- }catch(e){
-  alert('خاصك تسمح للكاميرا: كليكي على ⚙️ حدا الرابط > الأذونات > سماح للكاميرا');
-  console.log(e);
- }
+  if(currentStream)currentStream.getTracks().forEach(t=>t.stop());
+  let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
+  currentStream=s;video.srcObject=s;
+  document.getElementById('offBadge').textContent='ON';document.getElementById('offBadge').style.background='#00E676';
+  mediaRecorder=new MediaRecorder(s);mediaRecorder.ondataavailable=e=>chunks.push(e.data);
+  mediaRecorder.onstop=()=>{let blob=new Blob(chunks,{type:'video/webm'});chunks=[];addChat(getName(),'',blob)};
+ }catch(e){alert('سمح للكاميرا: ⚙️ > سماح')}
 }
-
-function flipCam(){
- facing=facing==='user'?'environment':'user';
- startLive();
-}
-
-function addSystem(t){
- let d=document.createElement('div');
- d.className='chatMsg';
- d.innerHTML=`<b style="color:green">✔️ نظام:</b> ${t}`;
- chatBox.appendChild(d);
- chatBox.scrollTop=chatBox.scrollHeight;
-}
-
-function addChat(name,text,videoBlob=null){
- let d=document.createElement('div');
- d.className='chatMsg';
- let time=new Date().toLocaleTimeString().slice(0,5);
- let content=`<b>${name}:</b> ${text} <span style="color:#999;font-size:10px"> ${time}</span>`;
- if(videoBlob){
-   let url=URL.createObjectURL(videoBlob);
-   content+=`<br><video src="${url}" autoplay loop muted playsinline controls style="width:140px;height:180px;object-fit:cover;border-radius:12px;margin-top:6px;display:block"></video>
-   <div style="display:flex;gap:6px;margin-top:6px">
-   <button onclick="this.closest('.chatMsg').remove()" style="background:#ff3b30;color:white;border:none;padding:4px 8px;border-radius:6px;font-size:11px">🗑️</button>
-   <button onclick="let a=document.createElement('a');a.href='${url}';a.download='RifLive.webm';a.click()" style="background:#007aff;color:white;border:none;padding:4px 8px;border-radius:6px;font-size:11px">💾 حفظ</button>
-   </div>`;
- }
+function flipCam(){facing=facing==='user'?'environment':'user';startLive()}
+function addChat(name,text,blob=null){
+ let d=document.createElement('div');d.className='chatMsg';
+ let content=`<b>${name}:</b> ${text} <span style="color:#999;font-size:10px">${new Date().toLocaleTimeString().slice(0,5)}</span>`;
+ if(blob){let url=URL.createObjectURL(blob);content+=`<br><video src="${url}" autoplay loop muted controls style="width:150px;height:200px;object-fit:cover;border-radius:12px;margin-top:6px;display:block"></video><div style="display:flex;gap:6px;margin-top:6px"><button onclick="this.closest('.chatMsg').remove()" style="background:#ff3b30;color:white;border:none;padding:4px 8px;border-radius:6px;font-size:11px">🗑️</button><button onclick="let a=document.createElement('a');a.href='${url}';a.download='RifLive.webm';a.click()" style="background:#007aff;color:white;border:none;padding:4px 8px;border-radius:6px;font-size:11px">💾 حفظ</button></div>`}
  d.innerHTML=content+`<button class="del" onclick="this.parentElement.remove()">×</button>`;
- chatBox.appendChild(d);
- chatBox.scrollTop=chatBox.scrollHeight;
- // صوت تنبيه
- try{let a=new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3');a.volume=0.3;a.play()}catch(e){}
+ chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;
 }
-
-function sendMsg(){
- let i=document.getElementById('msgInput');
- if(!i.value.trim())return;
- addChat(getName(),i.value);
- i.value='';
-}
-
-function recordVideoComment(){
- if(!mediaRecorder || mediaRecorder.state!=='inactive') return alert('شغل الكاميرا الأول');
- chunks=[];
- mediaRecorder.start();
- addSystem('جاري التسجيل 5 ثواني...');
- setTimeout(()=>mediaRecorder.stop(),5000);
-}
-
-function sendGift(){
- let icons=['❤️','🌹','💎','🔥','👑'];
- let icon=icons[Math.floor(Math.random()*icons.length)];
- let el=document.createElement('div');
- el.className='gift';
- el.textContent=icon;
- el.style.left=Math.random()*80+'%';
- document.getElementById('liveWrap').appendChild(el);
- setTimeout(()=>el.remove(),3000);
- addChat(getName(),icon);
-}
-
-function clearAll(){if(confirm('تمسح كاع التعاليق؟')) chatBox.innerHTML='';}
-
+function sendMsg(){let i=document.getElementById('msgInput');if(!i.value.trim())return;addChat(getName(),i.value);i.value=''}
+function recordVideoComment(){if(!mediaRecorder)return alert('شغل الكاميرا');chunks=[];mediaRecorder.start();setTimeout(()=>mediaRecorder.stop(),5000)}
+function sendGift(){addChat(getName(),'❤️🔥')}
 document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
 </script>
 </body>
