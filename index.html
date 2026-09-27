@@ -8,26 +8,65 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@800&display=swap');
 body{font-family:'Tajawal',sans-serif;background:#FFF9C4;color:#222}
-.glass{background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.08);box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+.glass{background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.08)}
+.tab-active{background:black!important;color:white!important}
 @keyframes up{0%{transform:translateY(20px);opacity:0}15%{opacity:1}100%{transform:translateY(-100px);opacity:0}}
 .float{animation:up 4s forwards}
-.tab-active{background:black!important;color:white!important}
 </style>
 </head>
 <body class="pb-10">
-<header class="p-4 flex justify-between sticky top-0 bg-[#FFF9C4]/90 z-50 backdrop-blur"><b>🪐 RifLive</b><div class="flex gap-2 text-xs"><button onclick="showTab('live')" id="tLive" class="tab-active px-4 py-1.5 rounded-full glass">لايف</button><button onclick="showTab('posts')" id="tPost" class="px-4 py-1.5 rounded-full glass">المنشورات</button></div></header>
+<header class="p-4 flex justify-between sticky top-0 bg-[#FFF9C4]/90 z-50"><b>🪐 RifLive</b><div class="flex gap-2 text-xs"><button onclick="showTab('live')" id="tLive" class="tab-active px-4 py-1.5 rounded-full glass">لايف</button><button onclick="showTab('posts')" id="tPost" class="px-4 py-1.5 rounded-full glass">المنشورات</button></div></header>
 
 <div id="page-live" class="p-4">
 <div class="glass rounded-[2rem] overflow-hidden relative aspect-[9/14] max-w-sm mx-auto bg-black">
-<video id="cam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
+<video id="cam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;background:black"></video>
 <div id="overlay" class="absolute bottom-20 left-2 right-2 flex flex-col gap-2 pointer-events-none z-10"></div>
 <div class="absolute top-3 left-3 z-20 flex gap-2"><span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs">● LIVE</span><span id="st" class="bg-white/80 text-black px-3 py-1 rounded-full text-xs">OFF</span></div>
 <div class="absolute bottom-3 left-3 right-3 z-20 flex gap-2">
-<button onclick="startCam()" class="flex-1 bg-black text-white py-2.5 rounded-full font-bold text-sm">شغل الكاميرا</button>
-<button onclick="flip()" class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center text-black"><i class="fa-solid fa-repeat"></i></button>
+<button onclick="startCam()" class="flex-1 bg-white text-black py-2.5 rounded-full font-bold text-sm">📷 شغل الكاميرا</button>
+<button onclick="flip()" class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center"><i class="fa-solid fa-repeat"></i></button>
 </div>
 </div>
 <div class="max-w-sm mx-auto mt-4">
 <div class="flex gap-2"><input id="txt" placeholder="كتب تعليق..." class="flex-1 glass rounded-full px-4 py-3 text-sm outline-none"><button onclick="addText(0)" class="bg-black text-white px-5 rounded-full text-sm font-bold">إرسال</button></div>
-<div class="flex gap-2 mt-2"><button id="vbtn" onclick="recVid()" class="flex-1 bg-red-600 text-white py-3 rounded-full font-bold text-sm"><i class="fa-solid fa-video"></i> تعليق بالفيديو 5s</button><button onclick="addText(1)" class="bg-yellow-400 text-black w-12 rounded-full">🔴</button></div>
-<p id="rst" class="
+<div class="flex gap-2 mt-2"><button id="vbtn" onclick="recVid()" class="flex-1 bg-red-600 text-white py-3 rounded-full font-bold text-sm">تعليق بالفيديو 5s</button><button onclick="addText(1)" class="bg-yellow-400 text-black w-12 rounded-full">🔴</button></div>
+<p id="rst" class="text-center text-xs mt-2 text-red-600 font-bold"></p>
+<div id="list" class="mt-3 space-y-3"></div>
+</div>
+</div>
+
+<div id="page-posts" class="p-4 hidden max-w-sm mx-auto">
+<div class="glass rounded-[1.5rem] p-4">
+<h3 class="font-bold mb-3">📸 نشر صورة / فيديو</h3>
+<input type="file" id="fileIn" accept="image/*,video/*" class="hidden" onchange="previewFile(event)">
+<div id="previewBox" class="hidden rounded-xl overflow-hidden bg-black/10 h-48 flex items-center justify-center mb-3 relative"><img id="imgPrev" class="hidden w-full h-full object-cover"><video id="vidPrev" class="hidden w-full h-full object-cover" controls></video><button onclick="removePreview()" class="absolute top-2 left-2 bg-black/70 text-white w-8 h-8 rounded-full"><i class="fa-solid fa-xmark"></i></button></div>
+<textarea id="caption" placeholder="كتب وصف..." class="w-full glass rounded-xl p-3 text-sm outline-none h-20"></textarea>
+<div class="flex gap-2 mt-3"><button onclick="document.getElementById('fileIn').click()" class="flex-1 bg-white border py-3 rounded-full font-bold text-sm">اختار</button><button onclick="publishPost()" class="flex-1 bg-black text-white py-3 rounded-full font-bold text-sm">نشر 🚀</button></div>
+</div>
+<div id="postsList" class="mt-3 space-y-4"></div>
+</div>
+
+<script>
+let comments=JSON.parse(localStorage.getItem('rif_vid')||'[]');
+let posts=JSON.parse(localStorage.getItem('rif_posts')||'[]');
+let stream=null,facing='user',rec=null,isRec=false,selectedFileData=null,selectedFileType=null;
+function showTab(t){document.getElementById('page-live').classList.toggle('hidden',t!=='live');document.getElementById('page-posts').classList.toggle('hidden',t!=='posts');document.getElementById('tLive').classList.toggle('tab-active',t==='live');document.getElementById('tPost').classList.toggle('tab-active',t==='posts');}
+async function startCam(){
+ let v=document.getElementById('cam'); let st=document.getElementById('st'); let rst=document.getElementById('rst');
+ try{
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  // كنجربو بلا facing باش يخدم فكاع التيليفونات
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
+  v.srcObject=stream; await v.play();
+  st.innerText='ON'; st.style.background='#22c55e'; st.style.color='white';
+  rst.innerText='';
+ }catch(e){
+  console.log(e);
+  st.innerText='خطأ';
+  rst.innerText='⚠️ ما كاينش إذن الكاميرا: دير Allow / السماح من الفوق. الخطأ: '+e.message;
+  alert('خاصك تسمح للكاميرا:\n1. كليكي على 🔒 ولا ⚙️ حدا العنوان لفوق\n2. دير السماح للكاميرا والميكرو\n3. عاود رفرشي الصفحة');
+ }
+}
+function flip(){facing=facing==='user'?'environment':'user';startCam()}
+function addText(imp){let i=document.getElementById('txt');if(!i.value.trim())return;let o={t:'text',txt:i.value,imp:!!imp,time:new Date().toLocaleTimeString()};comments.unshift(o);localStorage.setItem('rif_vid',JSON.stringify(comments));renderC();i.value='';float(o.txt,o.imp)}
+async function recVid(){if(!stream) await startCam();if(isRec)return;isRec=true;let b=document.getElementById('vbtn'),s=document.getElementById('rst');let chunks=[];rec=new MediaRecorder(stream,{mimeType:'video/webm'});rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};rec.onstop=()=>{let blob=new Blob(chunks,{type:'video/webm'});let r=new FileReader();r.readAsDataURL(blob);r.onloadend=()=>{let o={t:'video',data:r.result,time:new Date().toLocaleTimeString()};comments.unshift(o);localStorage.setItem('rif_vid',JSON.stringify(comments));renderC();s.innerText='تم ✅'};float('🎥 تعليق فيديو',0)};rec.start();s.innerText='🔴 كنسجل 5 ثواني...';let c=5;b.innerText='🔴 '+c;let iv=setInterval(()=>{c--;b.innerText='
