@@ -1,95 +1,127 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+<head><!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RifLive - تعليق فيديو</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RifLive</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@900&display=swap');
-body{font-family:'Tajawal',sans-serif;background:#0a0a0f;color:white}
-.glass{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15)}
-.red-dot{animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}
-@keyframes flyUp{0%{transform:translateY(20px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(-120px);opacity:0}}
-.float-comment{animation:flyUp 4s forwards}
+body{font-family:'Tajawal',sans-serif;background:#FFF9C4;color:#222}
+.glass{background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.1);box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+@keyframes up{0%{transform:translateY(20px);opacity:0}15%{opacity:1}100%{transform:translateY(-100px);opacity:0}}
+.float{animation:up 4s forwards}
 </style>
 </head>
-<body class="pb-20">
-<header class="p-4 flex justify-between sticky top-0 bg-[#0a0a0f]/90 z-50"><b>🪐 RifLive - تعليق فيديو</b><div id="redCount" class="hidden bg-red-600 w-6 h-6 rounded-full text-xs flex items-center justify-center red-dot">0</div></header>
+<body>
+<header class="p-4 flex justify-between sticky top-0 bg-[#FFF9C4]/90 z-50 backdrop-blur"><b class="text-black">🪐 RifLive</b><span id="red" class="hidden bg-red-600 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center">0</span></header>
 
-<div id="page-live" class="p-4">
+<div class="p-4">
 <div class="glass rounded-[2rem] overflow-hidden relative aspect-[9/14] max-w-sm mx-auto bg-black">
-<video id="myCam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;background:#111"></video>
-<div id="videoOverlay" class="absolute bottom-24 left-2 right-2 flex flex-col gap-2 pointer-events-none z-10"></div>
-<div class="absolute top-3 left-3 flex gap-2 z-20"><span class="bg-red-600 px-3 py-1 rounded-full text-xs font-bold red-dot">● LIVE</span><span id="status" class="glass px-3 py-1 rounded-full text-xs">OFF</span></div>
-<div class="absolute bottom-3 left-3 right-3 flex gap-2 z-20">
-<button onclick="startCam()" class="flex-1 bg-white text-black py-2 rounded-full font-bold text-xs">شغل الكاميرا</button>
-<button onclick="flipCam()" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center"><i class="fa-solid fa-repeat"></i></button>
-</div>
-</div>
-<div class="max-w-sm mx-auto mt-4">
-<div class="flex gap-2"><input id="liveComment" placeholder="كتب تعليق..." class="flex-1 glass rounded-full px-4 py-3 text-sm outline-none"><button onclick="addTextComment(false)" class="bg-white text-black px-4 rounded-full text-sm font-bold">إرسال</button></div>
-<div class="flex gap-2 mt-3">
-<button id="vidBtn" onclick="recordVideoComment()" class="flex-1 bg-red-600 py-3 rounded-full font-bold text-sm"><i class="fa-solid fa-video"></i> تعليق بالفيديو (5 ثواني)</button>
-<button onclick="addTextComment(true)" class="bg-yellow-500 text-black w-12 rounded-full">🔴</button>
-</div>
-<p id="recStatus" class="text-center text-xs mt-2 text-red-400"></p>
+<video id="cam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
+<div id="overlay" class="absolute bottom-20 left-2 right-2 flex flex-col gap-2 pointer-events-none z-10"></div>
+<div class="absolute top-3 left-3 z-20 flex gap-2"><span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs">● LIVE</span><span id="st" class="bg-white/80 text-black px-3 py-1 rounded-full text-xs">OFF</span></div>
+<div class="absolute bottom-3 left-3 right-3 z-20 flex gap-2">
+<button onclick="startCam()" class="flex-1 bg-black text-white py-2.5 rounded-full font-bold text-sm">شغل الكاميرا</button>
+<button onclick="flip()" class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center text-black"><i class="fa-solid fa-repeat"></i></button>
 </div>
 </div>
 
-<div class="p-4 max-w-sm mx-auto"><h3 class="font-bold mb-3">💬 التعاليق (نص + فيديو)</h3><div id="allComments" class="space-y-3"></div></div>
+<div class="max-w-sm mx-auto mt-4">
+<div class="flex gap-2"><input id="txt" placeholder="كتب تعليق..." class="flex-1 glass rounded-full px-4 py-3 text-sm outline-none text-black"><button onclick="addText(0)" class="bg-black text-white px-5 rounded-full text-sm font-bold">إرسال</button></div>
+<div class="flex gap-2 mt-2">
+<button id="vbtn" onclick="recVid()" class="flex-1 bg-red-600 text-white py-3 rounded-full font-bold text-sm"><i class="fa-solid fa-video"></i> تعليق بالفيديو 5s</button>
+<button onclick="addText(1)" class="bg-yellow-400 text-black w-12 rounded-full">🔴</button>
+</div>
+<p id="rst" class="text-center text-xs mt-2 text-red-600 font-bold"></p>
+
+<div class="mt-6 flex justify-between items-center">
+<h3 class="font-bold text-black">💬 التعاليق (نص + فيديو)</h3>
+<button onclick="clearAll()" class="bg-black text-white px-4 py-1.5 rounded-full text-xs"><i class="fa-solid fa-trash"></i> مسح الكل</button>
+</div>
+
+<div id="list" class="mt-3 space-y-3"></div>
+</div>
+</div>
 
 <script>
-let comments=JSON.parse(localStorage.getItem('rif_vid_comments')||'[]');
-let stream=null,facing='user',mediaRec=null,recording=false;
-
-async function startCam(){let v=document.getElementById('myCam'),s=document.getElementById('status');try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});v.srcObject=stream;await v.play();s.innerText='ON';s.className='bg-green-600 px-3 py-1 rounded-full text-xs';}catch(e){alert('خطأ: '+e.message);}}
-async function flipCam(){facing=facing==='user'?'environment':'user';await startCam();}
-
-function addTextComment(imp){
- let txt=document.getElementById('liveComment').value.trim();if(!txt)return;
- let obj={type:'text',txt,important:imp,time:new Date().toLocaleTimeString()};
- comments.unshift(obj);saveAndRender();document.getElementById('liveComment').value='';
- showFloat(txt,imp);
+let comments=JSON.parse(localStorage.getItem('rif_vid')||'[]');
+let stream=null,facing='user',rec=null,isRec=false;
+async function startCam(){let v=document.getElementById('cam');try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});v.srcObject=stream;await v.play();document.getElementById('st').innerText='ON';}catch(e){alert(e.message)}}
+function flip(){facing=facing==='user'?'environment':'user';startCam()}
+function addText(imp){let i=document.getElementById('txt');if(!i.value.trim())return;let o={t:'text',txt:i.value,imp:!!imp,time:new Date().toLocaleTimeString()};comments.unshift(o);save();i.value='';float(o.txt,o.imp)}
+async function recVid(){
+ if(!stream){await startCam()}
+ if(isRec)return; isRec=true;
+ let b=document.getElementById('vbtn'),s=document.getElementById('rst');
+ let chunks=[]; rec=new MediaRecorder(stream,{mimeType:'video/webm'});
+ rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)}
+ rec.onstop=()=>{let blob=new Blob(chunks,{type:'video/webm'});let r=new FileReader();r.readAsDataURL(blob);r.onloadend=()=>{let o={t:'video',data:r.result,time:new Date().toLocaleTimeString()};comments.unshift(o);save();s.innerText='تم حفظ تعليق الفيديو ✅'};float('🎥 تعليق فيديو',0)};
+ rec.start(); s.innerText='🔴 كنسجل 5 ثواني...'; let c=5; b.innerText='🔴 '+c; let iv=setInterval(()=>{c--;b.innerText='🔴 '+c; if(c<=0){clearInterval(iv);rec.stop();isRec=false;b.innerHTML='<i class="fa-solid fa-video"></i> تعليق بالفيديو 5s'}},1000)
 }
+function save(){localStorage.setItem('rif_vid',JSON.stringify(comments));render()}
+function render(){let h='';comments.forEach((c,i)=>{if(c.t==='text'){h+=`<div class="glass rounded-2xl p-3 flex justify-between items-start ${c.imp?'border border-red-500 bg-red-100':''}"><div><p class="text-sm font-bold">${c.imp?'🔴 ':''}${c.txt}</p><p class="text-[10px] text-gray-500">${c.time}</p></div><button onclick="delOne(${i})" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>`}else{h+=`<div class="glass rounded-2xl p-2"><video src="${c.data}" controls playsinline class="w-full rounded-xl h-40 bg-black object-cover"></video><div class="flex justify-between items-center mt-1"><p class="text-[10px] text-gray-500">${c.time}</p><button onclick="delOne(${i})" class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-[10px]">مسح</button></div></div>`}});document.getElementById('list').innerHTML=h||'<p class="text-center text-gray-400
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RifLive</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@900&display=swap');
+body{font-family:'Tajawal',sans-serif;background:#FFF9C4;color:#222}
+.glass{background:rgba(255,255,255,0.7);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.1);box-shadow:0 4px 10px rgba(0,0,0,0.05)}
+@keyframes up{0%{transform:translateY(20px);opacity:0}15%{opacity:1}100%{transform:translateY(-100px);opacity:0}}
+.float{animation:up 4s forwards}
+</style>
+</head>
+<body>
+<header class="p-4 flex justify-between sticky top-0 bg-[#FFF9C4]/90 z-50 backdrop-blur"><b class="text-black">🪐 RifLive</b><span id="red" class="hidden bg-red-600 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center">0</span></header>
 
-async function recordVideoComment(){
- if(!stream){alert('شغل الكاميرا الأول');await startCam();return;}
- if(recording)return;
- let btn=document.getElementById('vidBtn'),stat=document.getElementById('recStatus');
- recording=true; btn.innerHTML='🔴 كنسجل... 5'; btn.classList.add('bg-gray-600');
- stat.innerText='كنسجل تعليق فيديو...';
- let chunks=[]; mediaRec=new MediaRecorder(stream,{mimeType:'video/webm'});
- mediaRec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
- mediaRec.onstop=()=>{
-  let blob=new Blob(chunks,{type:'video/webm'});
-  let url=URL.createObjectURL(blob);
-  let obj={type:'video',url: url, time:new Date().toLocaleTimeString(), important:false, blobData:null};
-  // نحتافظو كـ base64 باش يبقى ف localStorage
-  let reader=new FileReader(); reader.readAsDataURL(blob);
-  reader.onloadend=()=>{obj.blobData=reader.result; comments.unshift(obj); saveAndRender(); stat.innerText='تم حفظ تعليق الفيديو ✅';};
-  let ov=document.getElementById('videoOverlay');
-  let div=document.createElement('div'); div.className='float-comment glass rounded-full px-4 py-2 text-sm bg-red-600'; div.innerHTML='🎥 تعليق فيديو جديد'; ov.appendChild(div); setTimeout(()=>div.remove(),4000);
- };
- mediaRec.start();
- let c=5; let timer=setInterval(()=>{c--; btn.innerHTML=`🔴 كنسجل... ${c}`; if(c<=0){clearInterval(timer); mediaRec.stop(); recording=false; btn.innerHTML='<i class="fa-solid fa-video"></i> تعليق بالفيديو (5 ثواني)'; btn.classList.remove('bg-gray-600');}},1000);
-}
+<div class="p-4">
+<div class="glass rounded-[2rem] overflow-hidden relative aspect-[9/14] max-w-sm mx-auto bg-black">
+<video id="cam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
+<div id="overlay" class="absolute bottom-20 left-2 right-2 flex flex-col gap-2 pointer-events-none z-10"></div>
+<div class="absolute top-3 left-3 z-20 flex gap-2"><span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs">● LIVE</span><span id="st" class="bg-white/80 text-black px-3 py-1 rounded-full text-xs">OFF</span></div>
+<div class="absolute bottom-3 left-3 right-3 z-20 flex gap-2">
+<button onclick="startCam()" class="flex-1 bg-black text-white py-2.5 rounded-full font-bold text-sm">شغل الكاميرا</button>
+<button onclick="flip()" class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center text-black"><i class="fa-solid fa-repeat"></i></button>
+</div>
+</div>
 
-function saveAndRender(){localStorage.setItem('rif_vid_comments',JSON.stringify(comments)); renderAll();}
-function renderAll(){
- let h=''; comments.forEach((c,i)=>{
-  if(c.type==='text'){
-   h+=`<div class="glass rounded-2xl p-3 ${c.important?'border border-red-500 bg-red-500/10':''}"><p class="text-sm">${c.important?'🔴 ':''}${c.txt}</p><p class="text-[10px] text-gray-400">${c.time}</p></div>`;
-  }else{
-   let src=c.blobData||c.url;
-   h+=`<div class="glass rounded-2xl p-3"><video src="${src}" controls playsinline class="w-full rounded-xl h-32 object-cover bg-black"></video><p class="text-[10px] text-gray-400 mt-1">🎥 تعليق فيديو - ${c.time}</p></div>`;
-  }
- });
- document.getElementById('allComments').innerHTML=h||'لا تعاليق';
- let reds=comments.filter(c=>c.important).length; let rc=document.getElementById('redCount'); rc.innerText=reds; rc.classList.toggle('hidden',reds==0);
+<div class="max-w-sm mx-auto mt-4">
+<div class="flex gap-2"><input id="txt" placeholder="كتب تعليق..." class="flex-1 glass rounded-full px-4 py-3 text-sm outline-none text-black"><button onclick="addText(0)" class="bg-black text-white px-5 rounded-full text-sm font-bold">إرسال</button></div>
+<div class="flex gap-2 mt-2">
+<button id="vbtn" onclick="recVid()" class="flex-1 bg-red-600 text-white py-3 rounded-full font-bold text-sm"><i class="fa-solid fa-video"></i> تعليق بالفيديو 5s</button>
+<button onclick="addText(1)" class="bg-yellow-400 text-black w-12 rounded-full">🔴</button>
+</div>
+<p id="rst" class="text-center text-xs mt-2 text-red-600 font-bold"></p>
+
+<div class="mt-6 flex justify-between items-center">
+<h3 class="font-bold text-black">💬 التعاليق (نص + فيديو)</h3>
+<button onclick="clearAll()" class="bg-black text-white px-4 py-1.5 rounded-full text-xs"><i class="fa-solid fa-trash"></i> مسح الكل</button>
+</div>
+
+<div id="list" class="mt-3 space-y-3"></div>
+</div>
+</div>
+
+<script>
+let comments=JSON.parse(localStorage.getItem('rif_vid')||'[]');
+let stream=null,facing='user',rec=null,isRec=false;
+async function startCam(){let v=document.getElementById('cam');try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});v.srcObject=stream;await v.play();document.getElementById('st').innerText='ON';}catch(e){alert(e.message)}}
+function flip(){facing=facing==='user'?'environment':'user';startCam()}
+function addText(imp){let i=document.getElementById('txt');if(!i.value.trim())return;let o={t:'text',txt:i.value,imp:!!imp,time:new Date().toLocaleTimeString()};comments.unshift(o);save();i.value='';float(o.txt,o.imp)}
+async function recVid(){
+ if(!stream){await startCam()}
+ if(isRec)return; isRec=true;
+ let b=document.getElementById('vbtn'),s=document.getElementById('rst');
+ let chunks=[]; rec=new MediaRecorder(stream,{mimeType:'video/webm'});
+ rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)}
+ rec.onstop=()=>{let blob=new Blob(chunks,{type:'video/webm'});let r=new FileReader();r.readAsDataURL(blob);r.onloadend=()=>{let o={t:'video',data:r.result,time:new Date().toLocaleTimeString()};comments.unshift(o);save();s.innerText='تم حفظ تعليق الفيديو ✅'};float('🎥 تعليق فيديو',0)};
+ rec.start(); s.innerText='🔴 كنسجل 5 ثواني...'; let c=5; b.innerText='🔴 '+c; let iv=setInterval(()=>{c--;b.innerText='🔴 '+c; if(c<=0){clearInterval(iv);rec.stop();isRec=false;b.innerHTML='<i class="fa-solid fa-video"></i> تعليق بالفيديو 5s'}},1000)
 }
-function showFloat(txt,imp){let ov=document.getElementById('videoOverlay');let div=document.createElement('div');div.className=`float-comment glass rounded-full px-4 py-2 text-sm max-w-[80%] ${imp?'bg-red-600':''}`;div.innerHTML=`${imp?'🔴 ':''}${txt}`;ov.appendChild(div);setTimeout(()=>div.remove(),4000);}
-renderAll(); startCam();
-</script>
-</body>
-</html>
+function save(){localStorage.setItem('rif_vid',JSON.stringify(comments));render()}
+function render(){let h='';comments.forEach((c,i)=>{if(c.t==='text'){h+=`<div class="glass rounded-2xl p-3 flex justify-between items-start ${c.imp?'border border-red-500 bg-red-100':''}"><div><p class="text-sm font-bold">${c.imp?'🔴 ':''}${c.txt}</p><p class="text-[10px] text-gray-500">${c.time}</p></div><button onclick="delOne(${i})" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>`}else{h+=`<div class="glass rounded-2xl p-2"><video src="${c.data}" controls playsinline class="w-full rounded-xl h-40 bg-black object-cover"></video><div class="flex justify-between items-center mt-1"><p class="text-[10px] text-gray-500">${c.time}</p><button onclick="delOne(${i})" class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-[10px]">مسح</button></div></div>`}});document.getElementById('list').innerHTML=h||'<p class="text-center text-gray-400
