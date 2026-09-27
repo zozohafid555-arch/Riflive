@@ -3,80 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RifLive ⵣ</title>
+<title>RifLive PRO ⵣ</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#FFF9B0;display:flex;flex-direction:column;height:100vh}
 .topbar{display:flex;justify-content:space-between;padding:10px 14px}
-.tab{padding:7px 16px;border-radius:20px;border:none;font-weight:700}
+.tab{padding:7px 16px;border-radius:20px;border:none;font-weight:700;cursor:pointer}
 .tab.active{background:black;color:white}
-#liveWrap{position:relative;width:94%;height:45vh;margin:0 auto;background:black;border-radius:24px;overflow:hidden;flex-shrink:0}
-#video{width:100%;height:100%;object-fit:cover}
+.page{display:none;flex:1;overflow:hidden;flex-direction:column}
+.page.active{display:flex}
+#liveWrap{position:relative;width:94%;height:40vh;margin:0 auto;background:black;border-radius:24px;overflow:hidden;flex-shrink:0}
+#video{width:100%;height:100%;object-fit:cover;transition:.3s}
 #ui{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:10px}
 .badge span{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:900}
-.off{background:#eee}
-.live{background:red;color:white}
-#controls{display:flex;gap:8px}
-.flip{width:42px;height:42px;border-radius:50%;border:none;background:#ffffffcc;font-size:18px}
-.startBtn{flex:1;background:white;border:none;padding:12px;border-radius:30px;font-weight:900}
+.off{background:#eee}.live{background:red;color:white}
+#controls{display:flex;gap:6px;flex-wrap:wrap}
+.ctrl{border:none;border-radius:20px;padding:8px 12px;font-weight:700;font-size:12px;cursor:pointer}
+.flip{background:#ffffffcc}.rec{background:red;color:white}.share{background:#00E676}
+.filters{display:flex;gap:6px;overflow:auto}
+.filters button{background:#ffffffaa;border:none;padding:6px 10px;border-radius:15px;font-size:11px;white-space:nowrap}
 #chatSection{flex:1;width:94%;margin:10px auto;background:white;border-radius:20px;padding:10px;display:flex;flex-direction:column;overflow:hidden}
 #chatBox{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.chatMsg{background:#f5f5f5;color:black;padding:10px 14px;border-radius:14px;width:fit-content;max-width:90%;position:relative;box-shadow:0 1px 3px #0001}
-.del{position:absolute;top:-6px;left:-6px;background:red;color:white;border:none;width:20px;height:20px;border-radius:50%;font-size:12px}
+.chatMsg{background:#f5f5f5;padding:10px 14px;border-radius:14px;width:fit-content;max-width:90%;position:relative;box-shadow:0 1px 3px #0001}
+.del{position:absolute;top:-6px;left:-6px;background:red;color:white;border:none;width:20px;height:20px;border-radius:50%}
 .videoBtn{background:#ff0000;color:white;border:none;padding:11px;border-radius:30px;font-weight:800;width:100%;margin-top:8px}
 #inputBar{display:flex;gap:8px;padding:10px;width:94%;margin:0 auto 10px}
 .inpWrap{flex:1;background:white;border-radius:30px;display:flex;align-items:center;padding:6px 14px;gap:6px}
 .inpWrap input{flex:1;border:none;outline:none}
 .sendBtn{background:black;color:white;border:none;padding:10px 18px;border-radius:30px;font-weight:800}
+/* Posts Page */
+#postsFeed{width:94%;margin:0 auto;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px;padding-bottom:10px}
+.postCard{background:white;border-radius:20px;padding:12px}
+.postCard img{width:100%;border-radius:16px;margin-top:8px;max-height:300px;object-fit:cover}
+.createBox{background:white;width:94%;margin:10px auto;border-radius:20px;padding:10px;display:flex;gap:8px}
+.createBox input{flex:1;border:none;outline:none;background:#f5f5f5;padding:10px 14px;border-radius:20px}
 </style>
 </head>
 <body>
-<div class="topbar"><div style="display:flex;gap:8px"><button class="tab">المنشورات</button><button class="tab active">لايف</button></div><b>RifLive 🥨</b></div>
-
-<div id="liveWrap">
-  <video id="video" autoplay muted playsinline></video>
-  <div id="ui">
-    <div class="badge"><span id="offBadge" class="off">OFF</span><span class="live">• LIVE</span></div>
-    <div id="controls"><button class="flip" onclick="flipCam()">🔄</button><button class="startBtn" onclick="startLive()">📷 شغل الكاميرا</button></div>
-  </div>
+<div class="topbar">
+ <div style="display:flex;gap:8px"><button class="tab" id="tabPosts" onclick="showPage('posts')">المنشورات</button><button class="tab active" id="tabLive" onclick="showPage('live')">لايف</button></div>
+ <b>RifLive PRO 🥨</b>
 </div>
 
-<div id="chatSection">
-  <div id="chatBox"></div>
-  <button class="videoBtn" onclick="recordVideoComment()">🔴 تعليق بالفيديو 5s</button>
+<div id="page-live" class="page active">
+ <div id="liveWrap">
+   <video id="video" autoplay muted playsinline></video>
+   <div id="ui">
+     <div class="badge"><span id="offBadge" class="off">OFF</span><span class="live">• LIVE</span><span id="viewCount" style="background:black;color:white;margin-right:6px">👀 1</span></div>
+     <div>
+       <div class="filters" style="margin-bottom:8px">
+         <button onclick="setFilter('none')">عادي</button>
+         <button onclick="setFilter('bright')">✨ تبييض</button>
+         <button onclick="setFilter('warm')">☀️ دافئ</button>
+         <button onclick="setFilter('bw')">⚫ أبيض/أسود</button>
+         <button onclick="setFilter('rif')">ⵣ ريفي</button>
+       </div>
+       <div id="controls">
+         <button class="ctrl flip" onclick="flipCam()">🔄</button>
+         <button class="ctrl" style="background:white" onclick="startLive()">📷 شغل</button>
+         <button class="ctrl rec" onclick="toggleFullRec()" id="fullRecBtn">🔴 سجل اللايف</button>
+         <button class="ctrl share" onclick="shareLive()">↗️ بارطاجي</button>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div id="chatSection">
+   <div id="chatBox"></div>
+   <button class="videoBtn" onclick="recordVideoComment()">🔴 تعليق بالفيديو 5s</button>
+ </div>
+ <div id="inputBar">
+   <button style="border:none;background:none;font-size:20px" onclick="sendGift()">❤️</button>
+   <div class="inpWrap"><input id="msgInput" placeholder="كتب تعليق..."></div>
+   <button class="sendBtn" onclick="sendMsg()">إرسال</button>
+ </div>
 </div>
 
-<div id="inputBar">
-  <button style="border:none;background:none;font-size:20px" onclick="sendGift()">❤️</button>
-  <div class="inpWrap"><input id="msgInput" placeholder="كتب تعليق..."></div>
-  <button class="sendBtn" onclick="sendMsg()">إرسال</button>
+<div id="page-posts" class="page">
+ <div class="createBox"><input id="postInput" placeholder="شنو كاين؟"><input type="file" id="postImg" accept="image/*" style="display:none"><button onclick="document.getElementById('postImg').click()">📷</button><button class="sendBtn" onclick="createPost()">نشر</button></div>
+ <div id="postsFeed"></div>
 </div>
 
 <script>
-let video=document.getElementById('video'),chatBox=document.getElementById('chatBox'),currentStream=null,facing='user',mediaRecorder=null,chunks=[],userName=localStorage.getItem('rif_name')||'';
-function getName(){if(!userName){userName=prompt('سميتك؟')||'ضيف';localStorage.setItem('rif_name',userName)}return userName}
-async function startLive(){
- try{
-  if(currentStream)currentStream.getTracks().forEach(t=>t.stop());
-  let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
-  currentStream=s;video.srcObject=s;
-  document.getElementById('offBadge').textContent='ON';document.getElementById('offBadge').style.background='#00E676';
-  mediaRecorder=new MediaRecorder(s);mediaRecorder.ondataavailable=e=>chunks.push(e.data);
-  mediaRecorder.onstop=()=>{let blob=new Blob(chunks,{type:'video/webm'});chunks=[];addChat(getName(),'',blob)};
- }catch(e){alert('سمح للكاميرا: ⚙️ > سماح')}
-}
-function flipCam(){facing=facing==='user'?'environment':'user';startLive()}
-function addChat(name,text,blob=null){
- let d=document.createElement('div');d.className='chatMsg';
- let content=`<b>${name}:</b> ${text} <span style="color:#999;font-size:10px">${new Date().toLocaleTimeString().slice(0,5)}</span>`;
- if(blob){let url=URL.createObjectURL(blob);content+=`<br><video src="${url}" autoplay loop muted controls style="width:150px;height:200px;object-fit:cover;border-radius:12px;margin-top:6px;display:block"></video><div style="display:flex;gap:6px;margin-top:6px"><button onclick="this.closest('.chatMsg').remove()" style="background:#ff3b30;color:white;border:none;padding:4px 8px;border-radius:6px;font-size:11px">🗑️</button><button onclick="let a=document.createElement('a');a.href='${url}';a.download='RifLive.webm';a.click()" style="background:#007aff;color:white;border:none;padding:4px 8px;border-radius:6px;font-size:11px">💾 حفظ</button></div>`}
- d.innerHTML=content+`<button class="del" onclick="this.parentElement.remove()">×</button>`;
- chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;
-}
-function sendMsg(){let i=document.getElementById('msgInput');if(!i.value.trim())return;addChat(getName(),i.value);i.value=''}
-function recordVideoComment(){if(!mediaRecorder)return alert('شغل الكاميرا');chunks=[];mediaRecorder.start();setTimeout(()=>mediaRecorder.stop(),5000)}
-function sendGift(){addChat(getName(),'❤️🔥')}
-document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
-</script>
-</body>
-</html>
+let video=document.getElementById('video'),chatBox=document.getElementById('chatBox'),currentStream=null,facing='user',mediaRecorder=null,chunks=[],fullChunks=[],isFullRec=false,userName=localStorage.getItem('rif_name')||'';
+let posts=JSON.parse(localStorage.getItem('rif_posts')||'[]');
+function show
