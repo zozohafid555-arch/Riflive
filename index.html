@@ -1,67 +1,95 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RifLive</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RifLive - تعليق فيديو</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@900&display=swap');body{font-family:'Tajawal',sans-serif;background:#0a0a0f;color:white}.glass{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1)}.red-dot{animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}</style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@900&display=swap');
+body{font-family:'Tajawal',sans-serif;background:#0a0a0f;color:white}
+.glass{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15)}
+.red-dot{animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}
+@keyframes flyUp{0%{transform:translateY(20px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(-120px);opacity:0}}
+.float-comment{animation:flyUp 4s forwards}
+</style>
 </head>
-<body class="pb-10">
-<header class="p-4 flex justify-between sticky top-0 bg-[#0a0a0f]/90 z-50"><div class="flex gap-2 items-center"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-200 to-orange-500 flex items-center justify-center">🪐</div><b>RifLive</b></div><div id="redCount" class="hidden bg-red-600 w-6 h-6 rounded-full text-xs flex items-center justify-center red-dot">0</div></header>
-
-<div class="flex gap-2 px-4">
-<button onclick="showTab('live')" id="tab-live" class="flex-1 py-3 rounded-2xl bg-white text-black font-bold">📹 لايف</button>
-<button onclick="showTab('market')" id="tab-market" class="flex-1 py-3 rounded-2xl glass">🛒 السوق</button>
-<button onclick="showTab('comments')" id="tab-comments" class="flex-1 py-3 rounded-2xl glass">💬 تعاليق</button>
-</div>
+<body class="pb-20">
+<header class="p-4 flex justify-between sticky top-0 bg-[#0a0a0f]/90 z-50"><b>🪐 RifLive - تعليق فيديو</b><div id="redCount" class="hidden bg-red-600 w-6 h-6 rounded-full text-xs flex items-center justify-center red-dot">0</div></header>
 
 <div id="page-live" class="p-4">
 <div class="glass rounded-[2rem] overflow-hidden relative aspect-[9/14] max-w-sm mx-auto bg-black">
 <video id="myCam" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;background:#111"></video>
-<div class="absolute top-3 left-3 flex gap-2"><span class="bg-red-600 px-3 py-1 rounded-full text-xs font-bold red-dot">● LIVE</span><span id="status" class="glass px-3 py-1 rounded-full text-xs">OFF</span></div>
-<div class="absolute bottom-3 left-3 right-3 flex gap-2">
-<button onclick="startCam()" class="flex-1 bg-white text-black py-3 rounded-full font-bold text-sm">شغل الكاميرا</button>
-<button onclick="stopCam()" class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center"><i class="fa-solid fa-stop"></i></button>
-<button onclick="flipCam()" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center"><i class="fa-solid fa-repeat"></i></button>
+<div id="videoOverlay" class="absolute bottom-24 left-2 right-2 flex flex-col gap-2 pointer-events-none z-10"></div>
+<div class="absolute top-3 left-3 flex gap-2 z-20"><span class="bg-red-600 px-3 py-1 rounded-full text-xs font-bold red-dot">● LIVE</span><span id="status" class="glass px-3 py-1 rounded-full text-xs">OFF</span></div>
+<div class="absolute bottom-3 left-3 right-3 flex gap-2 z-20">
+<button onclick="startCam()" class="flex-1 bg-white text-black py-2 rounded-full font-bold text-xs">شغل الكاميرا</button>
+<button onclick="flipCam()" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center"><i class="fa-solid fa-repeat"></i></button>
 </div>
 </div>
-<div class="max-w-sm mx-auto mt-4 flex gap-2"><input id="liveComment" placeholder="كتب تعليق..." class="flex-1 glass rounded-full px-4 py-3 text-sm outline-none"><button onclick="addComment(false)" class="bg-white text-black px-5 rounded-full text-sm font-bold">إرسال</button><button onclick="addComment(true)" class="bg-red-600 w-12 rounded-full"><i class="fa-solid fa-bell"></i></button></div>
+<div class="max-w-sm mx-auto mt-4">
+<div class="flex gap-2"><input id="liveComment" placeholder="كتب تعليق..." class="flex-1 glass rounded-full px-4 py-3 text-sm outline-none"><button onclick="addTextComment(false)" class="bg-white text-black px-4 rounded-full text-sm font-bold">إرسال</button></div>
+<div class="flex gap-2 mt-3">
+<button id="vidBtn" onclick="recordVideoComment()" class="flex-1 bg-red-600 py-3 rounded-full font-bold text-sm"><i class="fa-solid fa-video"></i> تعليق بالفيديو (5 ثواني)</button>
+<button onclick="addTextComment(true)" class="bg-yellow-500 text-black w-12 rounded-full">🔴</button>
+</div>
+<p id="recStatus" class="text-center text-xs mt-2 text-red-400"></p>
+</div>
 </div>
 
-<div id="page-market" class="p-4 hidden"><div class="grid grid-cols-2 gap-3" id="marketGrid"></div></div>
-<div id="page-comments" class="p-4 hidden max-w-sm mx-auto"><div id="allComments" class="space-y-3"></div></div>
-
-<div id="prodModal" class="fixed inset-0 bg-black/80 hidden z-[99] p-4 flex items-end">
-<div class="glass rounded-[2rem] w-full max-w-sm mx-auto p-4"><div class="flex justify-between"><h3 id="mName" class="font-black"></h3><button onclick="closeProd()" class="w-8 h-8 rounded-full bg-white/10">X</button></div><img id="mImg" class="w-full h-48 object-cover rounded-2xl mt-3"><p id="mPrice" class="text-green-400 font-bold mt-2"></p><div id="mComments" class="mt-3 space-y-2 max-h-32 overflow-y-auto"></div><div class="flex gap-2 mt-3"><input id="mCommentInput" placeholder="علق..." class="flex-1 glass rounded-full px-3 py-2 text-sm outline-none"><button onclick="addProdComment(false)" class="bg-white text-black px-4 rounded-full text-sm">إرسال</button><button onclick="addProdComment(true)" class="bg-red-600 px-3 rounded-full">🔴</button></div></div>
-</div>
+<div class="p-4 max-w-sm mx-auto"><h3 class="font-bold mb-3">💬 التعاليق (نص + فيديو)</h3><div id="allComments" class="space-y-3"></div></div>
 
 <script>
-let products=[{n:"زيت أركان",p:"150 درهم",img:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"},{n:"عسل جبلي",p:"200 درهم",img:"https://images.unsplash.com/photo-1587049352851-8d4e89133924?w=400"},{n:"زعفران",p:"80 درهم",img:"https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400"},{n:"كسكس رفي",p:"60 درهم",img:"https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400"}];
-let comments=JSON.parse(localStorage.getItem('rif_comments')||'[]');
-let currentProd=null,stream=null,facing='user';
-let grid=document.getElementById('marketGrid');
-products.forEach((pr,i)=>{grid.innerHTML+=`<div onclick="openProd(${i})" class="glass rounded-[1.5rem] overflow-hidden"><img src="${pr.img}" class="w-full h-28 object-cover"><div class="p-3"><p class="font-bold text-sm">${pr.n}</p><p class="text-green-400 text-xs">${pr.p}</p></div></div>`;});
-function showTab(t){['live','market','comments'].forEach(x=>{document.getElementById('page-'+x).classList.add('hidden');document.getElementById('tab-'+x).className='flex-1 py-3 rounded-2xl glass';});document.getElementById('page-'+t).classList.remove('hidden');document.getElementById('tab-'+t).className='flex-1 py-3 rounded-2xl bg-white text-black font-bold';if(t==='comments')renderAll();}
-async function startCam(){
- let v=document.getElementById('myCam'),s=document.getElementById('status'),log=document.getElementById('status');
- try{
-  if(stream)stream.getTracks().forEach(t=>t.stop());
-  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
-  v.srcObject=stream; await v.play();
-  s.innerText='ON'; s.className='bg-green-600 px-3 py-1 rounded-full text-xs';
- }catch(e){alert('خطأ: '+e.name+' - '+e.message+'\n\nحل الرابط ف Chrome ودير Allow');}
-}
-function stopCam(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}document.getElementById('myCam').srcObject=null;document.getElementById('status').innerText='OFF';}
+let comments=JSON.parse(localStorage.getItem('rif_vid_comments')||'[]');
+let stream=null,facing='user',mediaRec=null,recording=false;
+
+async function startCam(){let v=document.getElementById('myCam'),s=document.getElementById('status');try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});v.srcObject=stream;await v.play();s.innerText='ON';s.className='bg-green-600 px-3 py-1 rounded-full text-xs';}catch(e){alert('خطأ: '+e.message);}}
 async function flipCam(){facing=facing==='user'?'environment':'user';await startCam();}
-function addComment(imp){let txt=document.getElementById('liveComment').value.trim();if(!txt)return;comments.unshift({txt,important:imp,time:new Date().toLocaleTimeString()});localStorage.setItem('rif_comments',JSON.stringify(comments));document.getElementById('liveComment').value='';renderAll();}
-function renderAll(){let reds=comments.filter(c=>c.important).length;let rc=document.getElementById('redCount');rc.innerText=reds;rc.classList.toggle('hidden',reds==0);let h='';comments.forEach(c=>{h+=`<div class="glass rounded-2xl p-3 ${c.important?'border border-red-500 bg-red-500/10':''}"><p class="text-sm">${c.important?'🔴 ':''}${c.txt}</p><p class="text-[10px] text-gray-400">${c.time}</p></div>`});document.getElementById('allComments').innerHTML=h||'لا تعاليق';}
-function openProd(i){currentProd=i;document.getElementById('mImg').src=products[i].img;document.getElementById('mName').innerText=products[i].n;document.getElementById('mPrice').innerText=products[i].p;document.getElementById('prodModal').classList.remove('hidden');renderProd();}
-function closeProd(){document.getElementById('prodModal').classList.add('hidden');}
-function renderProd(){let list=JSON.parse(localStorage.getItem('prod_'+currentProd)||'[]');let h='';list.slice().reverse().forEach(c=>{h+=`<div class="glass rounded-xl p-2 text-xs ${c.important?'border border-red-500':''}">${c.important?'🔴 ':''}${c.txt}</div>`});document.getElementById('mComments').innerHTML=h||'<p class="text-[10px] text-gray-500">لا تعاليق</p>';}
-function addProdComment(imp){let inp=document.getElementById('mCommentInput');if(!inp.value.trim())return;let list=JSON.parse(localStorage.getItem('prod_'+currentProd)||'[]');list.push({txt:inp.value,important:imp});localStorage.setItem('prod_'+currentProd,JSON.stringify(list));comments.unshift({txt:inp.value,important:imp,time:new Date().toLocaleTimeString(),prod:currentProd});localStorage.setItem('rif_comments',JSON.stringify(comments));inp.value='';renderProd();renderAll();}
-renderAll();
+
+function addTextComment(imp){
+ let txt=document.getElementById('liveComment').value.trim();if(!txt)return;
+ let obj={type:'text',txt,important:imp,time:new Date().toLocaleTimeString()};
+ comments.unshift(obj);saveAndRender();document.getElementById('liveComment').value='';
+ showFloat(txt,imp);
+}
+
+async function recordVideoComment(){
+ if(!stream){alert('شغل الكاميرا الأول');await startCam();return;}
+ if(recording)return;
+ let btn=document.getElementById('vidBtn'),stat=document.getElementById('recStatus');
+ recording=true; btn.innerHTML='🔴 كنسجل... 5'; btn.classList.add('bg-gray-600');
+ stat.innerText='كنسجل تعليق فيديو...';
+ let chunks=[]; mediaRec=new MediaRecorder(stream,{mimeType:'video/webm'});
+ mediaRec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+ mediaRec.onstop=()=>{
+  let blob=new Blob(chunks,{type:'video/webm'});
+  let url=URL.createObjectURL(blob);
+  let obj={type:'video',url: url, time:new Date().toLocaleTimeString(), important:false, blobData:null};
+  // نحتافظو كـ base64 باش يبقى ف localStorage
+  let reader=new FileReader(); reader.readAsDataURL(blob);
+  reader.onloadend=()=>{obj.blobData=reader.result; comments.unshift(obj); saveAndRender(); stat.innerText='تم حفظ تعليق الفيديو ✅';};
+  let ov=document.getElementById('videoOverlay');
+  let div=document.createElement('div'); div.className='float-comment glass rounded-full px-4 py-2 text-sm bg-red-600'; div.innerHTML='🎥 تعليق فيديو جديد'; ov.appendChild(div); setTimeout(()=>div.remove(),4000);
+ };
+ mediaRec.start();
+ let c=5; let timer=setInterval(()=>{c--; btn.innerHTML=`🔴 كنسجل... ${c}`; if(c<=0){clearInterval(timer); mediaRec.stop(); recording=false; btn.innerHTML='<i class="fa-solid fa-video"></i> تعليق بالفيديو (5 ثواني)'; btn.classList.remove('bg-gray-600');}},1000);
+}
+
+function saveAndRender(){localStorage.setItem('rif_vid_comments',JSON.stringify(comments)); renderAll();}
+function renderAll(){
+ let h=''; comments.forEach((c,i)=>{
+  if(c.type==='text'){
+   h+=`<div class="glass rounded-2xl p-3 ${c.important?'border border-red-500 bg-red-500/10':''}"><p class="text-sm">${c.important?'🔴 ':''}${c.txt}</p><p class="text-[10px] text-gray-400">${c.time}</p></div>`;
+  }else{
+   let src=c.blobData||c.url;
+   h+=`<div class="glass rounded-2xl p-3"><video src="${src}" controls playsinline class="w-full rounded-xl h-32 object-cover bg-black"></video><p class="text-[10px] text-gray-400 mt-1">🎥 تعليق فيديو - ${c.time}</p></div>`;
+  }
+ });
+ document.getElementById('allComments').innerHTML=h||'لا تعاليق';
+ let reds=comments.filter(c=>c.important).length; let rc=document.getElementById('redCount'); rc.innerText=reds; rc.classList.toggle('hidden',reds==0);
+}
+function showFloat(txt,imp){let ov=document.getElementById('videoOverlay');let div=document.createElement('div');div.className=`float-comment glass rounded-full px-4 py-2 text-sm max-w-[80%] ${imp?'bg-red-600':''}`;div.innerHTML=`${imp?'🔴 ':''}${txt}`;ov.appendChild(div);setTimeout(()=>div.remove(),4000);}
+renderAll(); startCam();
 </script>
 </body>
 </html>
