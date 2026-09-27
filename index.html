@@ -72,27 +72,4 @@ body{font-family:'Tajawal',sans-serif;background:#0a0a0f;color:white}
 
 <!-- PRODUCT MODAL -->
 <div id="prodModal" class="fixed inset-0 bg-black/80 backdrop-blur hidden z-[100] p-4 flex items-end">
-<div class="glass rounded-[2rem] w-full max-w-sm mx-auto p-4 max-h-[85vh] overflow-y-auto">
-<button onclick="closeProd()" class="float-left"><i class="fa-solid fa-xmark text-xl"></i></button>
-<img id="mImg" class="w-full h-48 object-cover rounded-2xl mt-2">
-<h3 id="mName" class="font-black text-lg mt-3"></h3>
-<p id="mPrice" class="text-green-400 font-bold"></p>
-<div class="mt-4">
-<p class="text-sm font-bold mb-2">التعاليق على المنتج:</p>
-<div id="mComments" class="space-y-2 mb-3"></div>
-<div class="flex gap-2">
-<input id="mCommentInput" placeholder="علق برسالة..." class="flex-1 glass rounded-full px-3 py-2 text-sm outline-none">
-<button onclick="addProdComment(false)" class="bg-white text-black px-3 rounded-full text-sm">إرسال</button>
-<button onclick="addProdComment(true)" class="bg-red-600 px-3 rounded-full text-sm">🔴</button>
-</div>
-<button onclick="startVideoComment()" class="w-full mt-2 glass py-2 rounded-full text-sm"><i class="fa-solid fa-video"></i> تعليق بفيديو (10 ثواني)</button>
-<video id="videoPreview" autoplay muted class="hidden w-full h-32 rounded-xl mt-2 bg-black"></video>
-</div>
-</div>
-</div>
-
-<script>
-// DATA
-let products=[
-{n: "زيت أركان حر", p:"150 درهم", img:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"},
-{n: "عسل
+<div class="glass rounded-[2rem] w-full max-w-sm mx-auto p-4 
