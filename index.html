@@ -1,98 +1,135 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RiiFlive - Front/Back Cam</title><style>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>RiiFlive ULTIMATE - جميع المواصفات</title>
+<style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#FFF9C4;display:flex;justify-content:center}
-.app{width:100%;max-width:420px;background:#fff;height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:relative}
-.camBox{position:relative;height:45vh;background:#000;flex-shrink:0;overflow:hidden;display:flex}
+.app{width:100%;max-width:430px;background:#fff;height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.camBox{position:relative;height:46vh;background:#000;flex-shrink:0;overflow:hidden;display:flex}
 #cam,#guest{width:100%;height:100%;object-fit:cover;background:#111}
 .camBox.one #cam{width:100%}.camBox.two #cam,.camBox.two #guest{width:50%}
-#cam.front{transform:scaleX(-1)} #cam.back{transform:scaleX(1)}
-.top{position:absolute;top:8px;left:8px;right:8px;z-index:5;display:flex;justify-content:space-between}
-.top span{background:rgba(255,255,255,.9);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:bold}
-.live{background:#E53935!important;color:#fff}
-.camCtrl{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:8px}
-.camCtrl button{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.5);color:#fff;width:44px;height:44px;border-radius:50%;font-size:18px;backdrop-filter:blur(5px)}
-.pinArea{background:#FFF3CD;padding:7px 10px;border-bottom:2px solid #FFC107;display:none;align-items:center;gap:6px;font-size:12px}
+#cam.front{transform:scaleX(-1)}#cam.back{transform:scaleX(1)}
+.top{position:absolute;top:8px;left:8px;right:8px;z-index:10;display:flex;justify-content:space-between;pointer-events:none}
+.top span{background:rgba(255,255,255,.92);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:bold;pointer-events:auto}
+.live{background:#E53935!important;color:#fff}.rec{background:#000!important;color:#fff;animation:blink 1s infinite;display:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.giftAnim{position:absolute;inset:0;z-index:8;pointer-events:none;display:flex;align-items:center;justify-content:center;font-size:90px;animation:pop 1.6s ease forwards}
+@keyframes pop{0%{transform:scale(0) rotate(0)}40%{transform:scale(1.4) rotate(10deg)}100%{transform:scale(0) translateY(-100px);opacity:0}}
+.ctrl{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:7px}
+.ctrl button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.6);background:rgba(0,0,0,.55);color:#fff;font-size:17px;backdrop-filter:blur(6px)}
+.ctrl button.active{background:#FFC107;color:#000}
+.pinArea{background:#FFF3CD;padding:8px 12px;border-bottom:2px solid #FFC107;display:none;align-items:center;gap:8px;font-size:12px}
+.stats{display:flex;justify-content:space-around;background:#fff;border-bottom:1px solid #eee;padding:6px 0;font-size:11px}
 .comsBox{flex:1;background:#f8f8f8;display:flex;flex-direction:column;overflow:hidden}
 #coms{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
-.b{background:#fff;padding:8px 11px;border-radius:16px;font-size:12px;max-width:82%;box-shadow:0 1px 3px rgba(0,0,0,.1);align-self:flex-start}
+.b{background:#fff;padding:8px 12px;border-radius:18px;font-size:12px;max-width:84%;box-shadow:0 1px 4px rgba(0,0,0,.08);align-self:flex-start;position:relative}
 .b.me{align-self:flex-end;background:#FFF9C4}
-.b video{width:100px;height:135px;object-fit:cover;border-radius:10px;display:block;margin-top:4px}
-.btns{display:flex;gap:4px;margin-top:5px}.btns button{border:none;padding:3px 7px;border-radius:10px;font-size:9px}
-.btn-tr{background:#E3F2FD}.btn-pin{background:#FFF3CD}
-.chatBar{background:#fff;border-top:1px solid #eee;padding:6px 8px 12px 8px}
-</style></head><body>
+.b b{font-size:9px;color:#999;display:block;margin-bottom:2px}.b video{width:105px;height:140px;object-fit:cover;border-radius:12px;display:block;margin-top:5px}
+.btns{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}.btns button{border:none;padding:4px 8px;border-radius:12px;font-size:9px;cursor:pointer}
+.btn-tr{background:#E3F2FD}.btn-pin{background:#FFF3CD}.btn-rep{background:#000;color:#fff}
+.trBox{margin-top:5px;background:#F0F7FF;padding:6px 8px;border-radius:8px;color:#1565C0;font-size:10px;display:none}
+.chat{background:#fff;border-top:1px solid #eee;padding:6px 8px 14px 8px}
+.emRow{display:flex;gap:8px;overflow-x:auto;padding:4px 0;scrollbar-width:none}.emRow span{font-size:19px;cursor:pointer;flex-shrink:0}
+.giftRow{display:flex;gap:6px;margin:5px 0}.giftRow button{border:none;background:#FFF0F5;padding:6px 12px;border-radius:20px;font-size:11px}
+.inpRow{display:flex;gap:5px;align-items:center;margin-top:4px}
+</style>
+</head>
+<body>
 <div class="app">
 <div id="camBox" class="camBox one">
 <video id="cam" class="front" autoplay playsinline muted></video>
 <video id="guest" autoplay playsinline muted style="display:none"></video>
-<div class="top"><span class="live">LIVE</span><span id="camLabel">📷 أمامية</span></div>
-<div class="camCtrl">
-<button onclick="toggleCam()" title="قلب الكاميرا">🔄</button>
+<div class="top"><div style="display:flex;gap:5px"><span class="live">LIVE</span><span id="view">1.3K 👥</span><span id="recLab" class="rec">● REC 00:00</span></div><div style="display:flex;gap:5px"><span id="dur">00:00</span><span id="like">❤️ 0</span><span id="camLab">📷 أمامية</span></div></div>
+<div id="giftLayer" style="position:absolute;inset:0;pointer-events:none"></div>
+<div class="ctrl">
+<button onclick="toggleCam()" title="قلب">🔄</button>
 <button onclick="toggleFlash()" id="flashBtn">⚡</button>
+<button onclick="zoomIn()">🔍+</button>
+<button onclick="zoomOut()">🔍-</button>
 <button onclick="toggleGuest()">👥</button>
+<button onclick="toggleRec()" id="recBtn">⏺️</button>
 </div>
 </div>
 
 <div id="pinArea" class="pinArea"><span>📌</span><span id="pinText"></span><button onclick="unpin()" style="margin-right:auto;border:none;background:none">✖️</button></div>
-<div id="coms" style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;background:#f8f8f8"></div>
+<div class="stats"><span>⏱️ <b id="sDur">00:00</b></span><span>💬 <b id="sCom">0</b></span><span>👁️ <b id="sView">1300</b></span><span>🎁 <b id="sGift">0</b></span></div>
 
-<div class="chatBar"><div style="display:flex;gap:5px;align-items:center"><input id="txt" placeholder="كتب تعليق..." style="flex:1;background:#F0F0F0;border:none;padding:11px 14px;border-radius:24px;outline:none"><button onclick="rV()" style="border:none;background:#FFE3E8;width:40px;height:40px;border-radius:50%">📹</button><button onclick="send()" style="background:#000;color:#fff;border:none;padding:11px 18px;border-radius:24px;font-weight:bold">إرسال</button></div></div>
+<div class="comsBox"><div id="coms"></div>
+<div class="chat">
+<div class="emRow"><span onclick="addE('❤️')">❤️</span><span onclick="addE('🔥')">🔥</span><span onclick="addE('😂')">😂</span><span onclick="addE('😍')">😍</span><span onclick="addE('👏')">👏</span><span onclick="addE('🇲🇦')">🇲🇦</span><span onclick="addE('💯')">💯</span><span onclick="addE('🌹')">🌹</span><span onclick="addE('🦁')">🦁</span></div>
+<div class="giftRow"><button onclick="gift('🌹',10)">🌹 10</button><button onclick="gift('🦁',100)">🦁 100</button><button onclick="gift('💎',500)">💎 500</button><button onclick="gift('🚀',1000)">🚀 1000</button></div>
+<div class="inpRow"><button onclick="start()" style="border:none;background:#E8F5E9;width:38px;height:38px;border-radius:50%">📷</button><input id="txt" placeholder="كتب تعليق..." style="flex:1;background:#F0F0F0;border:none;padding:11px 14px;border-radius:24px;outline:none;font-size:12px"><button onclick="rV()" style="border:none;background:#FFE3E8;width:38px;height:38px;border-radius:50%">📹</button><button onclick="send()" style="background:#000;color:#fff;border:none;padding:11px 18px;border-radius:24px;font-weight:bold;font-size:12px">إرسال</button></div>
+</div>
+</div>
 </div>
 
 <script>
-let camStream=null,guestStream=null,currentFacing="user",torchOn=false;
-async function start(facing=currentFacing){
+let camStream=null,guestStream=null,facing="user",torch=false,zoom=1,sec=0,tot=0,com=0,gifts=0,likes=0,rec=false,timer=null;
+const bad=["زامل","قحبة","كلب","حمار","سب"];
+async function start(f=facing){
  if(camStream)camStream.getTracks().forEach(t=>t.stop());
  try{
-  let s=await navigator.mediaDevices.getUserMedia({
-   video:{facingMode:facing, width:{ideal:1280}, height:{ideal:720}},
-   audio:false
-  });
-  camStream=s;
-  let v=document.getElementById('cam');
-  v.srcObject=s;
-  v.className=facing==="user"?"front":"back";
-  document.getElementById('camLabel').innerText=facing==="user"?"📷 أمامية":"📷 خلفية";
-  currentFacing=facing;
+  let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:f,width:{ideal:1280},height:{ideal:720}},audio:false});
+  camStream=s;let v=document.getElementById('cam');v.srcObject=s;v.className=f==="user"?"front":"back";
+  document.getElementById('camLab').innerText=f==="user"?"📷 أمامية":"📷 خلفية";facing=f;zoom=1;v.style.transform=(f==="user"?"scaleX(-1)":"scaleX(1)")+` scale(${zoom})`;
   await v.play();
- }catch(e){alert("ما كايناش كاميرا "+facing+" - جرب تسمح للكاميرا");}
+ }catch(e){alert("سمح للكاميرا: "+e.message);}
 }
-function toggleCam(){
- let newFacing=currentFacing==="user"?"environment":"user";
- start(newFacing);
-}
-async function toggleFlash(){
- try{
-  let track=camStream?.getVideoTracks()[0];
-  if(!track)return;
-  torchOn=!torchOn;
-  await track.applyConstraints({advanced:[{torch:torchOn}]});
-  document.getElementById('flashBtn').style.background=torchOn?"#FFC107":"rgba(0,0,0,.6)";
- }catch(e){alert("الفلاش خدام غير فالكاميرا الخلفية");}
-}
+function toggleCam(){start(facing==="user"?"environment":"user");}
+async function toggleFlash(){try{let tr=camStream?.getVideoTracks()[0];if(!tr)return alert("الفلاش غير فالخلفية");torch=!torch;await tr.applyConstraints({advanced:[{torch}]});flashBtn.classList.toggle("active",torch);}catch(e){alert("الفلاش ما خدامش فهاد الجهاز");}}
+function zoomIn(){zoom=Math.min(3,zoom+0.3);applyZoom();}function zoomOut(){zoom=Math.max(1,zoom-0.3);applyZoom();}
+function applyZoom(){let v=document.getElementById('cam');let base=facing==="user"?"scaleX(-1)":"scaleX(1)";v.style.transform=`${base} scale(${zoom})`;}
 async function toggleGuest(){
  let box=document.getElementById('camBox');
- if(box.classList.contains('one')){
-  try{let s=await navigator.mediaDevices.getUserMedia({video:true});guestStream=s;guest.srcObject=s;guest.style.display='block';await guest.play();box.classList.remove('one');box.classList.add('two');}catch(e){}
- }else{ if(guestStream)guestStream.getTracks().forEach(t=>t.stop());guest.style.display='none';box.classList.remove('two');box.classList.add('one');}
+ if(box.classList.contains('one')){try{let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});guestStream=s;guest.srcObject=s;guest.style.display='block';await guest.play();box.classList.remove('one');box.classList.add('two');}catch(e){}}
+ else{if(guestStream)guestStream.getTracks().forEach(t=>t.stop());guest.style.display='none';box.classList.remove('two');box.classList.add('one');}
 }
+function addE(e){txt.value+=e;txt.focus();}
+function isBad(t){return bad.some(w=>t.toLowerCase().includes(w));}
 function send(){
- if(!txt.value.trim())return;
- let d=document.createElement("div");d.className="b me";d.innerHTML=`<b>أنت:</b> ${txt.value}<div style="display:flex;gap:4px;margin-top:4px"><button class="btn-pin" onclick="pin(this)" style="background:#FFF3CD;border:none;padding:3px 7px;border-radius:10px;font-size:9px">📌 تثبيت</button><button class="btn-tr" onclick="tr(this)" style="background:#E3F2FD;border:none;padding:3px 7px;border-radius:10px;font-size:9px">🌐 ترجمة</button></div>`;
- let c=document.getElementById('coms');if(c.firstChild)c.insertBefore(d,c.firstChild);else c.appendChild(d);txt.value="";
+ let v=txt.value.trim();if(!v)return;if(isBad(v)){alert("🚫 كلام ممنوع");return;}
+ let d=document.createElement("div");d.className="b me";
+ d.innerHTML=`<b>أنت:</b> <span class="orig">${v}</span><div class="trBox"></div><div class="btns"><button class="btn-tr" onclick="doTr(this)">🌐 ترجمة</button><button class="btn-pin" onclick="doPin(this)">📌 تثبيت</button><button class="btn-rep" onclick="doRep(this)">↩️ رد</button></div>`;
+ let c=document.getElementById('coms');c.firstChild?c.insertBefore(d,c.firstChild):c.appendChild(d);txt.value="";com++;sCom.innerText=com;
 }
-function pin(btn){pinArea.style.display='flex';pinText.innerText=btn.closest('.b').innerText.slice(0,40);}
-function unpin(){pinArea.style.display='none';}
-function tr(btn){
- let b=btn.closest('.b');
- let t=b.querySelector('.tr')||document.createElement('div');
- if(b.querySelector('.tr')){b.querySelector('.tr').remove();return;}
- t.className='tr';t.style.cssText='margin-top:4px;background:#F0F7FF;padding:5px;border-radius:6px;color:#1565C0;font-size:10px';t.innerText='Translated: Hello from Morocco';
- b.appendChild(t);
+function doTr(btn){
+ let box=btn.closest('.b'),orig=box.querySelector('.orig')?.innerText||"",tbox=box.querySelector('.trBox');
+ if(tbox.style.display==="block"){tbox.style.display="none";btn.innerText="🌐 ترجمة";return;}
+ let dict={"مرحبا":"Hello","كيف داير":"How are you?","زوين بزاف":"Very beautiful","الله يحفظك":"God bless you","تحياتي":"Greetings"};
+ tbox.innerText=dict[orig]||`[${orig}] → Translated: Hello from Morocco 🇲🇦`;tbox.style.display="block";btn.innerText="❌ إخفاء";
+}
+function doPin(btn){let tx=btn.closest('.b').querySelector('.orig')?.innerText||"فيديو";pinArea.style.display="flex";pinText.innerText=tx.slice(0,45);}
+function unpin(){pinArea.style.display="none";}
+function doRep(btn){let tx=btn.closest('.b').querySelector('.orig')?.innerText||"";txt.value="@"+tx.slice(0,12)+" ";txt.focus();}
+function gift(icon,val){
+ gifts+=val;likes+=val;sGift.innerText=gifts;like.innerText="❤️ "+likes;
+ let layer=document.getElementById('giftLayer');let el=document.createElement('div');el.className="giftAnim";el.innerText=icon;layer.appendChild(el);
+ let d=document.createElement("div");d.className="b";d.innerHTML=`<b>هدية 🎁</b> أرسل ${icon} +${val}`;let c=document.getElementById('coms');c.firstChild?c.insertBefore(d,c.firstChild):c.appendChild(d);
+ setTimeout(()=>el.remove(),1600);
 }
 async function rV(){
  if(camStream)camStream.getTracks().forEach(t=>t.stop());
- try{let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});let rec=new MediaRecorder(s),ch=[];rec.ondataavailable=e=>ch.push(e.data);rec.onstop=()=>{let u=URL.createObjectURL(new Blob(ch,{type:"video/webm"}));let d=document.createElement("div");d.className="b me";d.innerHTML=`<video src="${u}" controls playsinline style="width:100px;height:135px;object-fit:cover;border-radius:10px"></video>`;let c=document.getElementById('coms');if(c.firstChild)c.insertBefore(d,c.firstChild);else c.appendChild(d);s.getTracks().forEach(t=>t.stop());start(currentFacing);};rec.start();setTimeout(()=>rec.stop(),3500);}catch(e){start(currentFacing);}
+ try{
+  let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+  let rec=new MediaRecorder(s),ch=[];rec.ondataavailable=e=>ch.push(e.data);
+  rec.onstop=()=>{
+   let u=URL.createObjectURL(new Blob(ch,{type:"video/webm"}));
+   let d=document.createElement("div");d.className="b me";d.innerHTML=`<b>رد فيديو:</b><video src="${u}" controls playsinline></video><div class="btns"><button class="btn-pin" onclick="doPin(this)">📌 تثبيت</button><button class="btn-tr" onclick="doTr(this)">🌐 ترجمة</button></div>`;
+   let c=document.getElementById('coms');c.firstChild?c.insertBefore(d,c.firstChild):c.appendChild(d);
+   s.getTracks().forEach(t=>t.stop());start(facing);
+  };rec.start();setTimeout(()=>rec.stop(),3500);
+ }catch(e){start(facing);}
 }
+function toggleRec(){
+ let lab=document.getElementById('recLab'),btn=document.getElementById('recBtn');
+ if(!rec){rec=true;lab.style.display="inline-block";btn.innerText="⏹️";btn.classList.add("active");
+  timer=setInterval(()=>{sec++;tot++;let m=String(Math.floor(sec/60)).padStart(2,'0'),s=String(sec%60).padStart(2,'0');lab.innerText=`● REC ${m}:${s}`;dur.innerText=`${m}:${s}`;sDur.innerText=`${String(Math.floor(tot/60)).padStart(2,'0')}:${String(tot%60).padStart(2,'0')}`;},1000);
+ }else{rec=false;lab.style.display="none";btn.innerText="⏺️";btn.classList.remove("active");clearInterval(timer);alert("✅ تم حفظ اللايف - المدة: "+sDur.innerText);sec=0;}
+}
+setInterval(()=>{if(!rec){tot++;let m=String(Math.floor(tot/60)).padStart(2,'0'),s=String(tot%60).padStart(2,'0');dur.innerText=`${m}:${s}`;sDur.innerText=`${m}:${s}`;}},1000);
 window.onload=()=>start("user");
-</script></body></html>
+</script>
+</body>
+</html>
