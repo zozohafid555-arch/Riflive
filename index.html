@@ -1,72 +1,41 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RiiFlive - كاميرا فوق تعاليق تحت</title><style>
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RiiFlive - Fix Video Over Camera</title><style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#FFF9C4;display:flex;justify-content:center}
 .app{width:100%;max-width:420px;background:#fff;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-/* الكاميرا - بوحدها الفوق 45% */
-.camBox{position:relative;height:45vh;background:#000;flex-shrink:0;overflow:hidden}
+/* كاميرا صغيرة الفوق */
+.camBox{position:relative;height:38vh;background:#000;flex-shrink:0}
 #cam{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-.top{position:absolute;top:10px;left:10px;display:flex;gap:6px;z-index:2}
-.top span{background:#fff;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:bold}
+.top{position:absolute;top:8px;left:8px;display:flex;gap:5px;z-index:2}
+.top span{background:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:bold}
 .live{background:#E53935!important;color:#fff}
-/* التعاليق - لتحت فالبياض 55% */
-.comsBox{flex:1;background:#fff;display:flex;flex-direction:column;overflow:hidden;border-radius:22px 22px 0 0;margin-top:-20px;z-index:2;position:relative;box-shadow:0 -4px 12px rgba(0,0,0,.1)}
-#coms{flex:1;overflow-y:auto;padding:15px 10px 10px 10px;display:flex;flex-direction:column;gap:8px}
-.b{background:#F0F0F0;padding:10px 13px;border-radius:18px;font-size:13px;max-width:85%;align-self:flex-start}
-.b.me{align-self:flex-end;background:#E3F2FD}
-.b b{font-size:10px;color:#555;display:block}
-.b video{width:140px;border-radius:10px;margin-top:5px;display:block}
-.rb{border:none;background:#000;color:#fff;padding:3px 9px;border-radius:12px;font-size:10px;margin-top:5px}
-.chatBar{background:#fff;border-top:1px solid #eee;padding:10px}
-.em{display:flex;gap:8px;justify-content:flex-end;padding:5px 0}.em span{font-size:20px;cursor:pointer}
+/* التعاليق فالبياض - ماشي فوق الكاميرا */
+.comsBox{flex:1;background:#F5F5F5;display:flex;flex-direction:column;overflow:hidden}
+#coms{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:#F5F5F5}
+/* فقاعة التعليق صغيرة */
+.b{background:#fff;padding:8px 10px;border-radius:16px;font-size:12px;max-width:75%;box-shadow:0 1px 3px rgba(0,0,0,.15);align-self:flex-start}
+.b.me{align-self:flex-end;background:#FFF9C4}
+.b b{font-size:10px;color:#888;display:block;margin-bottom:2px}
+/* الفيديو صغير - ماشي كيغطي */
+.b video{width:120px!important;height:160px!important;object-fit:cover;border-radius:12px;margin-top:5px;background:#000}
+.rb{border:none;background:#000;color:#fff;padding:4px 10px;border-radius:12px;font-size:10px;margin-top:5px}
+.chatBar{background:#fff;border-top:1px solid #eee;padding:8px 10px 14px 10px}
+.em{display:flex;gap:10px;justify-content:flex-end;padding:4px 0}.em span{font-size:20px}
 </style></head><body>
 <div class="app">
-  <div class="camBox">
-    <video id="cam" autoplay playsinline muted></video>
-    <div class="top"><span class="live">LIVE</span><span>1.2K 👥</span></div>
-  </div>
-  <div class="comsBox">
-    <div id="coms"><div class="b"><b>أحمد:</b> مرحبا من الحسيمة ❤️<br><button class="rb" onclick="sR(this,'مرحبا')">↩️ رد</button></div></div>
+  <div class="camBox"><video id="cam" autoplay playsinline muted></video><div class="top"><span class="live">LIVE</span><span>1.2K 👥</span></div></div>
+  <div class="comsBox"><div id="coms"></div>
     <div class="chatBar">
-      <div class="em"><span onclick="txt.value+='❤️'">❤️</span><span onclick="txt.value+='🔥'">🔥</span><span onclick="txt.value+='😂'">😂</span><span onclick="txt.value+='🇲🇦'">🇲🇦</span></div>
-      <div style="display:flex;gap:6px;align-items:center;margin-top:6px">
-        <button onclick="start()" style="border:none;background:#E8F5E9;width:40px;height:40px;border-radius:50%">📷</button>
-        <input id="txt" placeholder="كتب تعليق..." style="flex:1;background:#F0F0F0;border:none;padding:11px 14px;border-radius:24px;outline:none">
-        <button onclick="rV()" style="border:none;background:#FFE3E8;width:40px;height:40px;border-radius:50%">📹</button>
-        <button onclick="send()" style="background:#000;color:#fff;border:none;padding:11px 18px;border-radius:24px;font-weight:bold">إرسال</button>
-      </div>
+      <div class="em"><span onclick="txt.value+='❤️'">❤️</span><span onclick="txt.value+='🔥'">🔥</span><span onclick="txt.value+='😂'">😂</span><span onclick="txt.value+='🇲🇦'">🇲🇦</span><span onclick="txt.value+='💯'">💯</span></div>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:6px"><button onclick="start()" style="border:none;background:#E8F5E9;width:38px;height:38px;border-radius:50%">📷</button><button onclick="send()" style="background:#000;color:#fff;border:none;padding:10px 18px;border-radius:24px;font-weight:bold;font-size:13px">إرسال</button><button onclick="rV()" style="border:none;background:#FFE3E8;width:38px;height:38px;border-radius:50%">📹</button><input id="txt" placeholder="كتب تعليق..." style="flex:1;background:#F0F0F0;border:none;padding:10px 12px;border-radius:24px;outline:none;font-size:12px"></div>
       <div id="reBar" style="display:none;justify-content:space-between;background:#FFE0B2;padding:6px 10px;border-radius:10px;font-size:11px;margin-top:6px"><span id="reTx"></span><button onclick="cR()" style="border:none;background:none">✖️</button></div>
     </div>
   </div>
 </div>
 <script>
-let st=null,rToEl=null,rToTx="";
-async function start(){try{if(st)st.getTracks().forEach(t=>t.stop());let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});cam.srcObject=s;st=s;}catch(e){}}
-function sR(btn,tx){rToEl=btn.closest('.b');rToTx=tx;reBar.style.display="flex";reTx.innerText="↩️ رد على: "+tx;txt.focus()}
+let st=null,rToEl=null,rToTx="";async function start(){try{if(st)st.getTracks().forEach(t=>t.stop());let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});cam.srcObject=s;st=s;}catch(e){}} 
+function sR(btn,tx){rToEl=btn.closest('.b');rToTx=tx;reBar.style.display="flex";reTx.innerText="↩️ "+tx;txt.focus()}
 function cR(){rToEl=null;reBar.style.display="none"}
-function send(){
-  if(!txt.value.trim())return;
-  let d=document.createElement("div");d.className="b me";
-  d.innerHTML="<b>أنت:</b> "+txt.value+"<br><button class='rb' onclick=\"sR(this,'"+txt.value.slice(0,8)+"')\">↩️ رد</button>";
-  let c=document.getElementById('coms');
-  if(c.firstChild)c.insertBefore(d,c.firstChild);else c.appendChild(d);
-  txt.value="";cR();
-}
-async function rV(){
-  try{
-    let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-    let rec=new MediaRecorder(s),ch=[];
-    rec.ondataavailable=e=>ch.push(e.data);
-    rec.onstop=()=>{
-      let u=URL.createObjectURL(new Blob(ch,{type:"video/webm"}));
-      let d=document.createElement("div");d.className="b me";
-      d.innerHTML="<b>فيديو:</b><video src='"+u+"' controls playsinline></video><br><button class='rb'>↩️ رد</button>";
-      let c=document.getElementById('coms');
-      if(c.firstChild)c.insertBefore(d,c.firstChild);else c.appendChild(d);
-      s.getTracks().forEach(t=>t.stop());
-    };
-    rec.start();setTimeout(()=>rec.stop(),4000);
-  }catch(e){}
-}
+function send(){if(!txt.value.trim())return;let d=document.createElement("div");d.className="b me";d.innerHTML="<b>أنت:</b> "+txt.value+"<br><button class='rb' onclick=\"sR(this,'"+txt.value.slice(0,8)+"')\">↩️ رد</button>";let c=document.getElementById('coms');if(c.firstChild)c.insertBefore(d,c.firstChild);else c.appendChild(d);txt.value="";cR();c.scrollTop=0}
+async function rV(){try{let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});let rec=new MediaRecorder(s),ch=[];rec.ondataavailable=e=>ch.push(e.data);rec.onstop=()=>{let u=URL.createObjectURL(new Blob(ch,{type:"video/webm"}));let d=document.createElement("div");d.className="b me";d.innerHTML="<b>رد فيديو:</b><video src='"+u+"' controls playsinline></video><br><button class='rb' onclick=\"sR(this,'فيديو')\">↩️ رد</button>";let c=document.getElementById('coms');if(c.firstChild)c.insertBefore(d,c.firstChild);else c.appendChild(d);s.getTracks().forEach(t=>t.stop());c.scrollTop=0};rec.start();setTimeout(()=>rec.stop(),4000);alert("كيسجل 4 ثواني")}catch(e){}}
 window.onload=start;
-</script>
-</body></html>
+</script></body></html>
