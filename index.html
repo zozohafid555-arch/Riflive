@@ -3,52 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Riflive - LIVE</title>
+<title>Riflive - PRO</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-body{background:#000;color:#fff;height:100vh;display:flex;flex-direction:column}
+body{background:#000;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden}
 #live{flex:3;position:relative;background:#111;overflow:hidden}
 #live video{width:100%;height:100%;object-fit:cover}
-#guest{position:absolute;right:10px;top:60px;width:110px;height:150px;border:2px solid #ffaa00;border-radius:12px;overflow:hidden;background:#222}
-#guest video{width:100%;height:100%;object-fit:cover}
+#guest{position:absolute;right:10px;top:60px;width:110px;height:150px;border:2px solid #ffaa00;border-radius:12px;overflow:hidden;background:#222;touch-action:none;cursor:grab;z-index:5}
+#guest:active{cursor:grabbing;border-color:#fff}
+#guest video{width:100%;height:100%;object-fit:cover;pointer-events:none}
 .badge{position:absolute;top:15px;left:15px;background:red;padding:5px 12px;border-radius:20px;font-weight:bold;font-size:12px;z-index:10}
 #chats{flex:2;display:flex}
 .col{flex:1;overflow-y:auto;padding:5px}
 .col:first-child{background:#121212;border-left:1px solid #333}
 .col:last-child{background:#1a1600}
-.t{padding:6px;background:#333;font-weight:bold;font-size:11px;margin:-5px -5px 5px -5px}
-.vip .t{background:#ffaa00;color:#000}
-.m{margin:4px 0;padding:6px;border-radius:8px;font-size:11px;background:#222}
-.vip .m{background:#fff;color:#000;font-weight:bold;display:flex;align-items:center;gap:5px}
+.t{padding:6px;background:#333;font-weight:bold;font-size:11px;margin:-5px -5px 5px -5px;position:sticky;top:0}
+.vip.t{background:#ffaa00;color:#000}
+.m{margin:5px 0;padding:7px;border-radius:10px;font-size:11px;background:#222;cursor:pointer}
+.vip.m{background:#fff;color:#000;font-weight:bold;display:flex;align-items:center;gap:5px;border:2px solid #ffaa00}
+.vip.m:hover{transform:scale(1.02)}
 #bottom{padding:8px;background:#000;border-top:1px solid #333;display:flex;gap:6px;align-items:center}
 #bottom input{flex:1;padding:10px;border-radius:20px;border:0;background:#222;color:#fff}
 .btn{padding:8px 12px;border-radius:20px;border:0;font-weight:bold;cursor:pointer}
 .red{background:red;color:#fff}
 .gold{background:#ffaa00;color:#000}
+/* الفيديو الكبير */
+#videoModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:100;flex-direction:column}
+#videoModal video{width:90%;max-width:350px;height:60%;background:#222;border-radius:15px;border:3px solid #ffaa00}
+#videoModal button{margin-top:15px;padding:10px 30px;border-radius:20px;border:0;background:#ffaa00;font-weight:bold}
 </style>
 </head>
 <body>
+
 <div id="live">
   <video id="mainCam" autoplay muted playsinline></video>
   <div id="guest"><video id="guestCam" autoplay muted playsinline></video></div>
   <div class="badge">🔴 LIVE 1.3K - Riflive</div>
 </div>
+
 <div id="chats">
   <div class="col" id="c1"><div class="t">💬 الدردشة العادية</div></div>
   <div class="col vip" id="c2"><div class="t">🎥 الساحة VIP - تعليق فيديو</div></div>
 </div>
+
 <div id="bottom">
   <button class="btn gold" onclick="sendVideo()">📹</button>
   <input id="inp" placeholder="كتب تعليق...">
   <button class="btn red" onclick="sendText()">إرسال</button>
 </div>
+
+<!-- نافذة الفيديو الكبير -->
+<div id="videoModal" onclick="this.style.display='none'">
+  <video id="bigVideo" autoplay loop playsinline></video>
+  <button>إغلاق ✕</button>
+  <p style="margin-top:10px;font-size:12px;color:#ffaa00">🎥 تعليق فيديو - 50c</p>
+</div>
+
 <script>
-async function startCam(){try{let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});document.getElementById('mainCam').srcObject=s;document.getElementById('guestCam').srcObject=s;}catch(e){}}
+async function startCam(){try{let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});document.getElementById('mainCam').srcObject=s;document.getElementById('guestCam').srcObject=s;document.getElementById('bigVideo').srcObject=s;}catch(e){alert("فتح الكاميرا: "+e)}}
+
 function sendText(){let i=document.getElementById('inp');if(!i.value)return;let d=document.createElement('div');d.className='m';d.textContent='أنت: '+i.value;document.getElementById('c1').appendChild(d);i.value='';}
-function sendVideo(){let d=document.createElement('div');d.className='m';d.innerHTML='▶️ أنت: فيديو 5s <b>50c</b>';document.getElementById('c2').appendChild(d);}
-startCam();
-// تعليقات وهمية باش تبان عامرة
-setTimeout(()=>{document.getElementById('c1').innerHTML+='<div class=m>Youssef: واعر 🔥</div><div class=m>Ahmed: El Ejido حاضر</div>';document.getElementById('c2').innerHTML+='<div class=m>⭐ Karim: أسد 🦁 100c</div><div class=m>▶️ Sara: فيديو سؤال 50c</div>';},500);
-</script>
-</body>
-</html>
+
+let canSend=true;
+function sendVideo(){
+ if(!canSend) return;
+ canSend=false;
+ let btn=document.querySelector('.gold');btn.textContent='⏳';
+ let d=document.createElement('div');d.className='m';d.innerHTML='▶️ أنت: فيديو 5s <b>50c</b>';
+ d.onclick=()=>openBigVideo();
+ document.getElementById('c2').appendChild(d);
+ setTimeout(()=>{canSend=true;btn.textContent='📹';},4000);
+}
+
+function openBigVideo(){
+ document.getElementById('videoModal').style.display='flex';
+}
+
+// ========= كود السحب ديال الكاميرا الصغيرة =========
+let guest=document.getElementById('guest');
+let isDragging=false, startX, startY, initialLeft, initialTop;
+
+guest.addEventListener('touchstart', startDrag);
+guest.addEventListener('mousedown', startDrag);
+window.addEventListener('touchmove', drag);
+window.addEventListener('mousemove', drag);
+window.addEventListener('touchend', stopDrag);
+window.addEventListener('mouseup', stopDrag);
+
+function startDrag(e){
+ isDragging=true;
+ let touch=e.touches?e.touches[0]:e;
+ startX=touch.clientX;
