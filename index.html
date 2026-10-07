@@ -1,186 +1,54 @@
-import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(RifliveApp());
-}
-
-class RifliveApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Riflive',
-      theme: ThemeData.dark(),
-      home: RifliveFullScreen(),
-    );
-  }
-}
-
-class RifliveFullScreen extends StatefulWidget {
-  @override
-  _RifliveFullScreenState createState() => _RifliveFullScreenState();
-}
-
-class _RifliveFullScreenState extends State<RifliveFullScreen> {
-  CameraController? cameraController;
-  List<CameraDescription>? cameras;
-  bool isSplit = true;
-  TextEditingController msgCtrl = TextEditingController();
-
-  // 1- تعاليق عادية
-  List<Map> chatNormal = [
-    {"user": "Youssef", "text": "واعر بزاف 🔥"},
-    {"user": "Ahmed", "text": "El Ejido حاضر"},
-    {"user": "Rif", "text": "تحية للجالية"},
-  ];
-
-  // 2- تعاليق VIP وفيديو
-  List<Map> chatVip = [
-    {"user": "Karim", "text": "أسد 🦁", "type": "gift", "coin": "100"},
-    {"user": "Sara", "text": "سؤال فيديو", "type": "video", "coin": "50"},
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    initCam();
-  }
-
-  initCam() async {
-    try {
-      cameras = await availableCameras();
-      cameraController = CameraController(cameras![0], ResolutionPreset.medium);
-      await cameraController!.initialize();
-      if (mounted) setState(() {});
-    } catch (e) {}
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Column(
-        children: [
-          // ================== الكاميرا مقسمة ==================
-          Expanded(
-            flex: 3,
-            child: cameraController == null ||!cameraController!.value.isInitialized
-               ? Container(color: Colors.grey[900], child: Center(child: Text("📹 كاميرا Riflive")) )
-                : Stack(
-                    children: [
-                      // كاميرا كبيرة
-                      SizedBox(width: double.infinity, height: double.infinity, child: CameraPreview(cameraController!)),
-                      // كاميرا صغيرة مقسمة
-                      if (isSplit)
-                        Positioned(
-                          right: 10,
-                          top: 50,
-                          child: Container(
-                            width: 110,
-                            height: 150,
-                            decoration: BoxDecoration(border: Border.all(color: Colors.amber, width: 2), borderRadius: BorderRadius.circular(12)),
-                            child: ClipRRect(borderRadius: BorderRadius.circular(10), child: CameraPreview(cameraController!)),
-                          ),
-                        ),
-                      // LIVE وزر التقسيم
-                      Positioned(
-                        top: 35,
-                        left: 10,
-                        right: 10,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(20)), child: Text("🔴 LIVE 1.3K", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
-                            GestureDetector(onTap: () => setState(() => isSplit =!isSplit), child: Container(padding: EdgeInsets.all(8), decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)), child: Icon(isSplit? Icons.close_fullscreen : Icons.people, size: 18))),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
-
-          // ================== التعاليق مقسمة على جوج ==================
-          Expanded(
-            flex: 2,
-            child: Row(
-              children: [
-                // يسار - دردشة
-                Expanded(
-                  child: Container(
-                    color: Color(0xFF121212),
-                    child: Column(
-                      children: [
-                        Container(width: double.infinity, padding: EdgeInsets.all(6), color: Colors.grey[800], child: Text("💬 الدردشة", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold))),
-                        Expanded(child: ListView.builder(itemCount: chatNormal.length, itemBuilder: (c, i) => Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3), child: Text("${chatNormal[i]['user']}: ${chatNormal[i]['text']}", style: TextStyle(fontSize: 11, color: Colors.white70))))),
-                      ],
-                    ),
-                  ),
-                ),
-                VerticalDivider(width: 1, color: Colors.white24),
-                // يمين - فيديو + VIP
-                Expanded(
-                  child: Container(
-                    color: Color(0xFF1A1600),
-                    child: Column(
-                      children: [
-                        Container(width: double.infinity, padding: EdgeInsets.all(6), color: Colors.amber[700], child: Text("🎥 الساحة VIP - فيديو", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black))),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: chatVip.length,
-                            itemBuilder: (c, i) {
-                              var m = chatVip[i];
-                              return Container(
-                                margin: EdgeInsets.all(4),
-                                padding: EdgeInsets.all(6),
-                                decoration: BoxDecoration(color: m['type'] == 'video'? Colors.amber[100] : Colors.white, borderRadius: BorderRadius.circular(8)),
-                                child: Row(
-                                  children: [
-                                    Icon(m['type'] == 'video'? Icons.play_circle_fill : Icons.star, size: 16, color: Colors.red),
-                                    SizedBox(width: 4),
-                                    Expanded(child: Text("${m['user']}: ${m['text']} ${m['coin']}c", style: TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold))),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ================== هدايا + إرسال ==================
-          Container(
-            padding: EdgeInsets.all(8),
-            color: Colors.black,
-            child: Column(
-              children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [Text("🚀\n1000", textAlign: TextAlign.center, style: TextStyle(fontSize: 10)), Text("💎\n500", textAlign: TextAlign.center, style: TextStyle(fontSize: 10)), Text("🐯\n100", textAlign: TextAlign.center, style: TextStyle(fontSize: 10)), Text("🌹\n10", textAlign: TextAlign.center, style: TextStyle(fontSize: 10))]),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    IconButton(icon: Icon(Icons.videocam, color: Colors.amber), onPressed: () => setState(() => chatVip.add({"user": "أنت", "text": "فيديو تعليق", "type": "video", "coin": "50"}))),
-                    Expanded(child: TextField(controller: msgCtrl, style: TextStyle(fontSize: 12, color: Colors.white), decoration: InputDecoration(hintText: "كتب تعليق...", hintStyle: TextStyle(fontSize: 11, color: Colors.white38), filled: true, fillColor: Colors.grey[900], contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))))),
-                    SizedBox(width: 6),
-                    ElevatedButton(onPressed: () { if (msgCtrl.text.isNotEmpty) { setState(() { chatNormal.add({"user": "أنت", "text": msgCtrl.text}); msgCtrl.clear(); }); } }, style: ElevatedButton.styleFrom(backgroundColor: Colors.red, shape: CircleBorder(), padding: EdgeInsets.all(12)), child: Icon(Icons.send, size: 16)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    cameraController?.dispose();
-    super.dispose();
-  }
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riflive - LIVE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#000;color:#fff;height:100vh;display:flex;flex-direction:column}
+#live{flex:3;position:relative;background:#111;overflow:hidden}
+#live video{width:100%;height:100%;object-fit:cover}
+#guest{position:absolute;right:10px;top:60px;width:110px;height:150px;border:2px solid #ffaa00;border-radius:12px;overflow:hidden;background:#222}
+#guest video{width:100%;height:100%;object-fit:cover}
+.badge{position:absolute;top:15px;left:15px;background:red;padding:5px 12px;border-radius:20px;font-weight:bold;font-size:12px;z-index:10}
+#chats{flex:2;display:flex}
+.col{flex:1;overflow-y:auto;padding:5px}
+.col:first-child{background:#121212;border-left:1px solid #333}
+.col:last-child{background:#1a1600}
+.t{padding:6px;background:#333;font-weight:bold;font-size:11px;margin:-5px -5px 5px -5px}
+.vip .t{background:#ffaa00;color:#000}
+.m{margin:4px 0;padding:6px;border-radius:8px;font-size:11px;background:#222}
+.vip .m{background:#fff;color:#000;font-weight:bold;display:flex;align-items:center;gap:5px}
+#bottom{padding:8px;background:#000;border-top:1px solid #333;display:flex;gap:6px;align-items:center}
+#bottom input{flex:1;padding:10px;border-radius:20px;border:0;background:#222;color:#fff}
+.btn{padding:8px 12px;border-radius:20px;border:0;font-weight:bold;cursor:pointer}
+.red{background:red;color:#fff}
+.gold{background:#ffaa00;color:#000}
+</style>
+</head>
+<body>
+<div id="live">
+  <video id="mainCam" autoplay muted playsinline></video>
+  <div id="guest"><video id="guestCam" autoplay muted playsinline></video></div>
+  <div class="badge">🔴 LIVE 1.3K - Riflive</div>
+</div>
+<div id="chats">
+  <div class="col" id="c1"><div class="t">💬 الدردشة العادية</div></div>
+  <div class="col vip" id="c2"><div class="t">🎥 الساحة VIP - تعليق فيديو</div></div>
+</div>
+<div id="bottom">
+  <button class="btn gold" onclick="sendVideo()">📹</button>
+  <input id="inp" placeholder="كتب تعليق...">
+  <button class="btn red" onclick="sendText()">إرسال</button>
+</div>
+<script>
+async function startCam(){try{let s=await navigator.mediaDevices.getUserMedia({video:true,audio:true});document.getElementById('mainCam').srcObject=s;document.getElementById('guestCam').srcObject=s;}catch(e){}}
+function sendText(){let i=document.getElementById('inp');if(!i.value)return;let d=document.createElement('div');d.className='m';d.textContent='أنت: '+i.value;document.getElementById('c1').appendChild(d);i.value='';}
+function sendVideo(){let d=document.createElement('div');d.className='m';d.innerHTML='▶️ أنت: فيديو 5s <b>50c</b>';document.getElementById('c2').appendChild(d);}
+startCam();
+// تعليقات وهمية باش تبان عامرة
+setTimeout(()=>{document.getElementById('c1').innerHTML+='<div class=m>Youssef: واعر 🔥</div><div class=m>Ahmed: El Ejido حاضر</div>';document.getElementById('c2').innerHTML+='<div class=m>⭐ Karim: أسد 🦁 100c</div><div class=m>▶️ Sara: فيديو سؤال 50c</div>';},500);
+</script>
+</body>
+</html>
